@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["Expression",""],["Operation",""]],"fn":[["parse",""]],"struct":[["ParseError",""]]});
+initSidebarItems({"enum":[["ExpressionData",""],["Operation",""]],"fn":[["parse",""]],"struct":[["Expression",""]]});

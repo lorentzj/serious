@@ -1,11 +1,20 @@
 #[derive(Debug)]
-pub struct ParseError {
-    pub message: String,
-    pub position: usize
+pub enum ErrorType {
+    BadParse,
+    UnboundIdentifier,
+    UndefinedOperation
 }
 
-impl ParseError {
-    pub fn new(message: String, position: usize) -> ParseError {
-        ParseError { message, position }
+#[derive(Debug)]
+pub struct Error {
+    pub error_type: ErrorType,
+    pub message: String,
+    pub start: usize,
+    pub end: usize
+}
+
+impl Error {
+    pub fn new(error_type: ErrorType, message: String, start: usize, end: usize) -> Error {
+        Error { error_type, message, start, end }
     }
 }

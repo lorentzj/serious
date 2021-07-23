@@ -223,9 +223,35 @@
 <span id="220">220</span>
 <span id="221">221</span>
 <span id="222">222</span>
+<span id="223">223</span>
+<span id="224">224</span>
+<span id="225">225</span>
+<span id="226">226</span>
+<span id="227">227</span>
+<span id="228">228</span>
+<span id="229">229</span>
+<span id="230">230</span>
+<span id="231">231</span>
+<span id="232">232</span>
+<span id="233">233</span>
+<span id="234">234</span>
+<span id="235">235</span>
+<span id="236">236</span>
+<span id="237">237</span>
+<span id="238">238</span>
+<span id="239">239</span>
+<span id="240">240</span>
+<span id="241">241</span>
+<span id="242">242</span>
+<span id="243">243</span>
+<span id="244">244</span>
+<span id="245">245</span>
+<span id="246">246</span>
+<span id="247">247</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std::iter::FromIterator</span>;
-<span class="kw">use</span> <span class="kw">super</span><span class="ident">::error::ParseError</span>;
+<span class="kw">use</span> <span class="kw">super</span><span class="ident">::error::Error</span>;
+<span class="kw">use</span> <span class="kw">super</span><span class="ident">::error::ErrorType</span>;
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Operation</span> {
@@ -265,7 +291,7 @@
     <span class="ident">tokens</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Token</span><span class="op">&gt;</span>
 }
 
-<span class="kw">type</span> <span class="ident">IntermediateLexerState</span> <span class="op">=</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">LexerState</span>, <span class="ident">ParseError</span><span class="op">&gt;</span>;
+<span class="kw">type</span> <span class="ident">IntermediateLexerState</span> <span class="op">=</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">LexerState</span>, <span class="ident">Error</span><span class="op">&gt;</span>;
 
 <span class="kw">impl</span> <span class="ident">LexerState</span> {
     <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">LexerState</span> {
@@ -283,11 +309,21 @@
             <span class="kw">match</span> <span class="ident">parsed_number</span> {
                 <span class="prelude-val">Ok</span>(<span class="ident">n</span>)  <span class="op">=</span><span class="op">&gt;</span> {
                     <span class="kw">if</span> <span class="ident">n</span> <span class="op">=</span><span class="op">=</span> <span class="ident">f64::INFINITY</span> {
-                        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">ParseError::new</span>(<span class="string">&quot;number too large to fit in f64&quot;</span>.<span class="ident">to_string</span>(), <span class="self">self</span>.<span class="ident">index</span> <span class="op">-</span> <span class="ident">n_len</span>));
+                        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::new</span>(
+                            <span class="ident">ErrorType::BadParse</span>,
+                            <span class="string">&quot;number too large to fit in f64&quot;</span>.<span class="ident">to_string</span>(),
+                            <span class="self">self</span>.<span class="ident">index</span> <span class="op">-</span> <span class="ident">n_len</span>,
+                            <span class="self">self</span>.<span class="ident">index</span>
+                        ))
                     }
                     <span class="self">self</span>.<span class="ident">tokens</span>.<span class="ident">push</span>(<span class="ident">Token::new</span>(<span class="ident">TokenType::Constant</span>(<span class="ident">n</span>), <span class="self">self</span>.<span class="ident">index</span> <span class="op">-</span> <span class="ident">n_len</span>, <span class="self">self</span>.<span class="ident">index</span>));
                 }
-                <span class="prelude-val">Err</span>(<span class="ident">msg</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">ParseError::new</span>(<span class="ident">msg</span>.<span class="ident">to_string</span>(), <span class="self">self</span>.<span class="ident">index</span> <span class="op">-</span> <span class="ident">n_len</span>))
+                <span class="prelude-val">Err</span>(<span class="ident">msg</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::new</span>(
+                    <span class="ident">ErrorType::BadParse</span>,
+                    <span class="ident">msg</span>.<span class="ident">to_string</span>(),
+                    <span class="self">self</span>.<span class="ident">index</span> <span class="op">-</span> <span class="ident">n_len</span>,
+                    <span class="self">self</span>.<span class="ident">index</span>
+                ))
             }
             <span class="self">self</span>.<span class="ident">curr_number</span> <span class="op">=</span> <span class="macro">vec!</span>[];
         }
@@ -295,7 +331,7 @@
         <span class="prelude-val">Ok</span>(<span class="self">self</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">finalize</span>(<span class="ident">state</span>: <span class="ident">IntermediateLexerState</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Token</span><span class="op">&gt;</span>, <span class="ident">ParseError</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">finalize</span>(<span class="ident">state</span>: <span class="ident">IntermediateLexerState</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Token</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">state</span> <span class="op">=</span> <span class="ident">state</span><span class="question-mark">?</span>.<span class="ident">parse_current_number</span>()<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(<span class="ident">state</span>.<span class="ident">tokens</span>)
     }
@@ -319,7 +355,12 @@
                 <span class="string">&#39;^&#39;</span>       <span class="op">=</span><span class="op">&gt;</span> <span class="ident">state</span>.<span class="ident">tokens</span>.<span class="ident">push</span>(<span class="ident">Token::new</span>(<span class="ident">TokenType::Op</span>(<span class="ident">Operation::Exponentiate</span>), <span class="ident">i</span>, <span class="ident">i</span> <span class="op">+</span> <span class="number">1</span>)),
                 <span class="string">&#39;A&#39;</span>..<span class="op">=</span><span class="string">&#39;z&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">state</span>.<span class="ident">tokens</span>.<span class="ident">push</span>(<span class="ident">Token::new</span>(<span class="ident">TokenType::Identifier</span>(<span class="ident">next</span>), <span class="ident">i</span>, <span class="ident">i</span> <span class="op">+</span> <span class="number">1</span>)),
                 <span class="string">&#39; &#39;</span>       <span class="op">=</span><span class="op">&gt;</span> (),
-                <span class="kw">_</span>         <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">ParseError::new</span>(<span class="macro">format!</span>(<span class="string">&quot;invalid character &#39;{}&#39;&quot;</span>, <span class="ident">next</span>), <span class="ident">i</span>))
+                <span class="kw">_</span>         <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::new</span>(
+                    <span class="ident">ErrorType::BadParse</span>,
+                    <span class="macro">format!</span>(<span class="string">&quot;invalid character &#39;{}&#39;&quot;</span>, <span class="ident">next</span>),
+                    <span class="ident">i</span>,
+                    <span class="ident">i</span> <span class="op">+</span> <span class="number">1</span>
+                ))
             }
         }
     }
@@ -327,9 +368,14 @@
     <span class="prelude-val">Ok</span>(<span class="ident">state</span>)
 }
 
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">lex</span>(<span class="ident">text</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Token</span><span class="op">&gt;</span>, <span class="ident">ParseError</span><span class="op">&gt;</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">lex</span>(<span class="ident">text</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Token</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
     <span class="kw">if</span> <span class="ident">text</span>.<span class="ident">is_empty</span>() {
-        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">ParseError::new</span>(<span class="string">&quot;expected token&quot;</span>.<span class="ident">to_string</span>(), <span class="number">0</span>));
+        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::new</span>(
+            <span class="ident">ErrorType::BadParse</span>,
+            <span class="string">&quot;expected token&quot;</span>.<span class="ident">to_string</span>(),
+            <span class="number">0</span>,
+            <span class="number">1</span>
+        ))
     }
     <span class="kw">let</span> <span class="ident">chars</span> <span class="op">=</span> <span class="ident">text</span>.<span class="ident">chars</span>().<span class="ident">enumerate</span>();
     <span class="kw">let</span> <span class="ident">state</span> <span class="op">=</span> <span class="ident">chars</span>.<span class="ident">fold</span>(<span class="prelude-val">Ok</span>(<span class="ident">LexerState::new</span>()), <span class="ident">consume_char</span>);
@@ -344,7 +390,8 @@
     <span class="kw">fn</span> <span class="ident">empty</span>() {
         <span class="kw">let</span> <span class="ident">err</span> <span class="op">=</span> <span class="ident">lex</span>(<span class="string">&quot;&quot;</span>).<span class="ident">unwrap_err</span>();
         <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">message</span>, <span class="string">&quot;expected token&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">position</span>, <span class="number">0</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">start</span>, <span class="number">0</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">end</span>, <span class="number">1</span>);
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
@@ -354,21 +401,24 @@
 
         <span class="kw">let</span> <span class="ident">err</span> <span class="op">=</span> <span class="ident">lex</span>(<span class="ident">too_big</span>.<span class="ident">as_str</span>()).<span class="ident">unwrap_err</span>();
         <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">message</span>, <span class="string">&quot;number too large to fit in f64&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">position</span>, <span class="number">0</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">start</span>, <span class="number">0</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">end</span>, <span class="number">310</span>);
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">invalid_float_extra_decimal</span>() {
         <span class="kw">let</span> <span class="ident">err</span> <span class="op">=</span> <span class="ident">lex</span>(<span class="string">&quot;0.2.3&quot;</span>).<span class="ident">unwrap_err</span>();
         <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">message</span>, <span class="string">&quot;invalid float literal&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">position</span>, <span class="number">0</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">start</span>, <span class="number">0</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">end</span>, <span class="number">5</span>);
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">invalid_float_only_decimal</span>() {
         <span class="kw">let</span> <span class="ident">err</span> <span class="op">=</span> <span class="ident">lex</span>(<span class="string">&quot;abc.&quot;</span>).<span class="ident">unwrap_err</span>();
         <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">message</span>, <span class="string">&quot;invalid float literal&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">position</span>, <span class="number">3</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">start</span>, <span class="number">3</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">end</span>, <span class="number">4</span>);
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>

@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["parser",""]]});
+initSidebarItems({"mod":[["interpreter",""],["parser",""]]});

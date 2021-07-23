@@ -1,5 +1,6 @@
 use std::iter::FromIterator;
-use super::error::ParseError;
+use super::error::Error;
+use super::error::ErrorType;
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum Operation {
@@ -39,7 +40,7 @@ struct LexerState {
     tokens: Vec<Token>
 }
 
-type IntermediateLexerState = Result<LexerState, ParseError>;
+type IntermediateLexerState = Result<LexerState, Error>;
 
 impl LexerState {
     fn new() -> LexerState {
@@ -57,11 +58,21 @@ impl LexerState {
             match parsed_number {
                 Ok(n)  => {
                     if n == f64::INFINITY {
-                        return Err(ParseError::new("number too large to fit in f64".to_string(), self.index - n_len));
+                        return Err(Error::new(
+                            ErrorType::BadParse,
+                            "number too large to fit in f64".to_string(),
+                            self.index - n_len,
+                            self.index
+                        ))
                     }
                     self.tokens.push(Token::new(TokenType::Constant(n), self.index - n_len, self.index));
                 }
-                Err(msg) => return Err(ParseError::new(msg.to_string(), self.index - n_len))
+                Err(msg) => return Err(Error::new(
+                    ErrorType::BadParse,
+                    msg.to_string(),
+                    self.index - n_len,
+                    self.index
+                ))
             }
             self.curr_number = vec![];
         }
@@ -69,7 +80,7 @@ impl LexerState {
         Ok(self)
     }
 
-    fn finalize(state: IntermediateLexerState) -> Result<Vec<Token>, ParseError> {
+    fn finalize(state: IntermediateLexerState) -> Result<Vec<Token>, Error> {
         let state = state?.parse_current_number()?;
         Ok(state.tokens)
     }
@@ -93,7 +104,12 @@ fn consume_char(state: IntermediateLexerState, (i, next): (usize, char)) -> Inte
                 '^'       => state.tokens.push(Token::new(TokenType::Op(Operation::Exponentiate), i, i + 1)),
                 'A'..='z' => state.tokens.push(Token::new(TokenType::Identifier(next), i, i + 1)),
                 ' '       => (),
-                _         => return Err(ParseError::new(format!("invalid character '{}'", next), i))
+                _         => return Err(Error::new(
+                    ErrorType::BadParse,
+                    format!("invalid character '{}'", next),
+                    i,
+                    i + 1
+                ))
             }
         }
     }
@@ -101,9 +117,14 @@ fn consume_char(state: IntermediateLexerState, (i, next): (usize, char)) -> Inte
     Ok(state)
 }
 
-pub fn lex(text: &str) -> Result<Vec<Token>, ParseError> {
+pub fn lex(text: &str) -> Result<Vec<Token>, Error> {
     if text.is_empty() {
-        return Err(ParseError::new("expected token".to_string(), 0));
+        return Err(Error::new(
+            ErrorType::BadParse,
+            "expected token".to_string(),
+            0,
+            1
+        ))
     }
     let chars = text.chars().enumerate();
     let state = chars.fold(Ok(LexerState::new()), consume_char);
@@ -118,7 +139,8 @@ mod tests {
     fn empty() {
         let err = lex("").unwrap_err();
         assert_eq!(err.message, "expected token");
-        assert_eq!(err.position, 0);
+        assert_eq!(err.start, 0);
+        assert_eq!(err.end, 1);
     }
 
     #[test]
@@ -128,21 +150,24 @@ mod tests {
 
         let err = lex(too_big.as_str()).unwrap_err();
         assert_eq!(err.message, "number too large to fit in f64");
-        assert_eq!(err.position, 0);
+        assert_eq!(err.start, 0);
+        assert_eq!(err.end, 310);
     }
 
     #[test]
     fn invalid_float_extra_decimal() {
         let err = lex("0.2.3").unwrap_err();
         assert_eq!(err.message, "invalid float literal");
-        assert_eq!(err.position, 0);
+        assert_eq!(err.start, 0);
+        assert_eq!(err.end, 5);
     }
 
     #[test]
     fn invalid_float_only_decimal() {
         let err = lex("abc.").unwrap_err();
         assert_eq!(err.message, "invalid float literal");
-        assert_eq!(err.position, 3);
+        assert_eq!(err.start, 3);
+        assert_eq!(err.end, 4);
     }
 
     #[test]
