@@ -3,11 +3,11 @@ use super::error::{Error, ErrorType};
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum Operation {
-    Add,
-    Subtract,
-    Multiply,
+    Exponentiate,
     Divide,
-    Exponentiate
+    Multiply,
+    Subtract,
+    Add
 }
 
 #[derive(Debug, PartialEq)]
@@ -94,16 +94,16 @@ fn consume_char(state: IntermediateLexerState, (i, next): (usize, char)) -> Inte
         _ => {
             state = state.parse_current_number()?;
             match next {
-                '('       => state.tokens.push(Token::new(TokenType::OpenParen, i, i + 1)),
-                ')'       => state.tokens.push(Token::new(TokenType::CloseParen, i, i + 1)),
-                '+'       => state.tokens.push(Token::new(TokenType::Op(Operation::Add), i, i + 1)),
-                '-'       => state.tokens.push(Token::new(TokenType::Op(Operation::Subtract), i, i + 1)),
-                '*'       => state.tokens.push(Token::new(TokenType::Op(Operation::Multiply), i, i + 1)),
-                '/'       => state.tokens.push(Token::new(TokenType::Op(Operation::Divide), i, i + 1)),
-                '^'       => state.tokens.push(Token::new(TokenType::Op(Operation::Exponentiate), i, i + 1)),
-                'A'..='z' => state.tokens.push(Token::new(TokenType::Identifier(next), i, i + 1)),
                 ' '       => (),
-                _         => return Err(Error::new(
+                '(' => state.tokens.push(Token::new(TokenType::OpenParen, i, i + 1)),
+                ')' => state.tokens.push(Token::new(TokenType::CloseParen, i, i + 1)),
+                '+' => state.tokens.push(Token::new(TokenType::Op(Operation::Add), i, i + 1)),
+                '-' => state.tokens.push(Token::new(TokenType::Op(Operation::Subtract), i, i + 1)),
+                '*' => state.tokens.push(Token::new(TokenType::Op(Operation::Multiply), i, i + 1)),
+                '/' => state.tokens.push(Token::new(TokenType::Op(Operation::Divide), i, i + 1)),
+                '^' => state.tokens.push(Token::new(TokenType::Op(Operation::Exponentiate), i, i + 1)),
+                'A'..='Z' | 'a'..='z' => state.tokens.push(Token::new(TokenType::Identifier(next), i, i + 1)),
+                _ => return Err(Error::new(
                     ErrorType::BadParse,
                     format!("invalid character '{}'", next),
                     i,

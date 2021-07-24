@@ -13,39 +13,63 @@ macro_rules! create_context {
     }};
 }
 
+fn op_representation(op: Operation) -> char {
+    match op {
+        Operation::Exponentiate => '^',
+        Operation::Multiply => '*',
+        Operation::Divide => '/',
+        Operation::Add => '+',
+        Operation::Subtract => '-'
+    }
+}
+
 pub fn interpret_tree(tree: Expression, context: &Context) -> Result<f64, Error> {
     match tree.data {
         ExpressionData::Constant(val) => Ok(val),
         ExpressionData::Op(lhs, op, rhs) => {
             let (lhs, rhs) = (interpret_tree(*lhs, context)?, interpret_tree(*rhs, context)?);
-            match op {
-                Operation::Add => Ok(lhs + rhs),
-                Operation::Subtract => Ok(lhs - rhs),
-                Operation::Multiply => Ok(lhs * rhs),
+            let result = match op {
+                Operation::Add => lhs + rhs,
+                Operation::Subtract => lhs - rhs,
+                Operation::Multiply => lhs * rhs,
                 Operation::Divide => {
                     if rhs == 0. {
-                        Err(Error::new(
+                        return Err(Error::new(
                             ErrorType::UndefinedOperation,
-                            "division by zero".to_string(),
+                            "division by zero is undefined".to_string(),
                             tree.start,
                             tree.end
                         ))
                     } else {
-                        Ok(lhs / rhs)
+                        lhs/rhs
                     }
                 }
                 Operation::Exponentiate => {
+                    let result = lhs.powf(rhs);
                     if lhs == 0. && rhs == 0. {
-                        Err(Error::new(
-                            ErrorType::UndefinedOperation,
-                            "0^0 is undetermined".to_string(),
-                            tree.start,
-                            tree.end
-                        ))
+                        f64::NAN
                     } else {
-                        Ok(lhs.powf(rhs))
+                        result
                     }
                 }
+            };
+
+            if result.is_infinite() {
+                Err(Error::new(
+                    ErrorType::UndefinedOperation,
+                    format!("({}) {} ({}) is infinity", lhs, op_representation(op), rhs),
+                    tree.start,
+                    tree.end
+                ))
+            } else if result.is_nan() {
+                Err(Error::new(
+                    ErrorType::UndefinedOperation,
+                    format!("({}) {} ({}) is undefined", lhs, op_representation(op), rhs),
+                    tree.start,
+                    tree.end
+                ))
+            } else {
+                Ok(result)
             }
         }
         ExpressionData::Identifier(name) => {
@@ -53,7 +77,7 @@ pub fn interpret_tree(tree: Expression, context: &Context) -> Result<f64, Error>
                 Some(val) => Ok(*val),
                 None => Err(Error::new(
                     ErrorType::UnboundIdentifier,
-                    format!("identifier {} is not bound", name),
+                    format!("identifier '{}' is not bound", name),
                     tree.start,
                     tree.end
                 ))
@@ -77,11 +101,21 @@ mod tests {
     }
 
     #[test]
+    fn err_from_parse() {
+        let err = interpret("(1*(2+3)", &Context::new()).unwrap_err();
+        assert_eq!(err.message, "failed to match paren");
+        assert_eq!(err.error_type, ErrorType::BadParse);
+        assert_eq!(err.start, 0);
+        assert_eq!(err.end, 1);
+    }
+
+    #[test]
     fn unbound_var() {
         let context = create_context!{'x' => 3.};
 
         let err = interpret("3 + xy", &context).unwrap_err();
-        assert_eq!(err.message, "identifier y is not bound");
+        assert_eq!(err.error_type, ErrorType::UnboundIdentifier);
+        assert_eq!(err.message, "identifier 'y' is not bound");
         assert_eq!(err.start, 5);
         assert_eq!(err.end, 6);
     }
@@ -89,7 +123,8 @@ mod tests {
     #[test]
     fn div_zero_1() {
         let err = interpret("10/0", &Context::new()).unwrap_err();
-        assert_eq!(err.message, "division by zero");
+        assert_eq!(err.error_type, ErrorType::UndefinedOperation);
+        assert_eq!(err.message, "division by zero is undefined");
         assert_eq!(err.start, 0);
         assert_eq!(err.end, 4);
     }
@@ -97,7 +132,8 @@ mod tests {
     #[test]
     fn div_zero_2() {
         let err = interpret("2^(56 / (2 - 2)) * 3", &Context::new()).unwrap_err();
-        assert_eq!(err.message, "division by zero");
+        assert_eq!(err.error_type, ErrorType::UndefinedOperation);
+        assert_eq!(err.message, "division by zero is undefined");
         assert_eq!(err.start, 2);
         assert_eq!(err.end, 16);
     }
@@ -122,5 +158,14 @@ mod tests {
 
         let val = interpret("-2x^2 + 3x - 5", &context).unwrap();
         assert_eq!(val, -25.);
+    }
+
+    #[test]
+    fn bad_pow() {
+        let err = interpret("4 + (1 - 2)^0.5", &Context::new()).unwrap_err();
+        assert_eq!(err.error_type, ErrorType::UndefinedOperation);
+        assert_eq!(err.message, "(-1) ^ (0.5) is undefined");
+        assert_eq!(err.start, 4);
+        assert_eq!(err.end, 15);
     }
 }

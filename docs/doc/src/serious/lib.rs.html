@@ -51,13 +51,20 @@
 <span id="48">48</span>
 <span id="49">49</span>
 <span id="50">50</span>
+<span id="51">51</span>
+<span id="52">52</span>
+<span id="53">53</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Serious is a simple language to evaluate concise mathematical expressions.</span>
-<span class="doccomment">//! </span>
-<span class="doccomment">//! - The numerical type is f64.</span>
-<span class="doccomment">//! - 1-char identifiers are bound when evaluating an expression.</span>
-<span class="doccomment">//! - Multiplication is implicit if an operator is omitted, unless the RHS is a constant (e.g. `3x`, not `x3`).</span>
-<span class="doccomment">//! - All operations are infix binary, except for the unary minus (`-x` is interpreted as `0 - x`).</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! - The numerical type is f64 (infinities and NaNs raise errors).</span>
+<span class="doccomment">//! - Variables are identified by characters within `[A-Za-z]`.</span>
+<span class="doccomment">//! - Multiplication is implicit if an operator is omitted, unless the RHS is a constant.</span>
+<span class="doccomment">//!     - `3x` means `3*x`.</span>
+<span class="doccomment">//!     - `x3` is a parse error.</span>
+<span class="doccomment">//! - All operations are infix binary, except for the unary minus.</span>
+<span class="doccomment">//!     - `-x + 2` means `0 - x + 2`.</span>
+<span class="doccomment">//!     - `2 + -x` is a parse error.</span>
 <span class="doccomment">//! - Operations are left-associative unless overridden by parentheses or precedence rules:</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! | Operator | Meaning      | Precedence</span>
@@ -70,22 +77,21 @@
 <span class="doccomment">//!</span>
 <span class="doccomment">//! Example Usage:</span>
 <span class="doccomment">//! ```</span>
-<span class="doccomment">//! use serious::create_context;</span>
-<span class="doccomment">//! use serious::interpret;</span>
+<span class="doccomment">//! use serious::{create_context, interpret};</span>
 <span class="doccomment">//! </span>
 <span class="doccomment">//! // create a context of bound variables</span>
 <span class="doccomment">//! let (x, y) = (12.34, 9999.);</span>
 <span class="doccomment">//! let context = create_context!{&#39;x&#39; =&gt; x, &#39;y&#39; =&gt; y};</span>
 <span class="doccomment">//!</span>
-<span class="doccomment">//! // evaluate an expression, given a context</span>
+<span class="doccomment">//! // evaluate an expression, given the context</span>
 <span class="doccomment">//! let result = interpret(&quot;x + y + 3.98&quot;, &amp;context).unwrap();</span>
 <span class="doccomment">//! assert_eq!(result, x + y + 3.98);</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! let result = interpret(&quot;3(-2x + 1)(x - 1)&quot;, &amp;context).unwrap();</span>
 <span class="doccomment">//! assert_eq!(result, 3.*(-2.*x + 1.)*(x - 1.));</span>
 <span class="doccomment">//!</span>
-<span class="doccomment">//! let result = interpret(&quot;4x^(-2) + 12x^(0.3xy) - (56.78/x)^13.2&quot;, &amp;context).unwrap();</span>
-<span class="doccomment">//! assert_eq!(result, 4.*x.powf(-2.) + 12.*x.powf(0.3*x*y) - (56.78/x).powf(13.2));</span>
+<span class="doccomment">//! let result = interpret(&quot;4x^3 - 12x^(0.3x - y/(50 - x))&quot;, &amp;context).unwrap();</span>
+<span class="doccomment">//! assert_eq!(result, 4.*x.powf(3.) - 12.*x.powf(0.3*x - y/(50. - x)));</span>
 <span class="doccomment">//! ```</span>
 
 <span class="doccomment">/// This module defines the type for expressions that fail to evaluate.</span>

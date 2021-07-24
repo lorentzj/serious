@@ -384,16 +384,16 @@ mod tests {
 
     #[test]
     fn simple_parens() {
-        let tree = parse("2*(x + 0.4)").unwrap();
+        let tree = parse("2*( x + 0.4 )").unwrap();
         assert_eq!(tree, Expression::new_op(
             Expression::new_const(2., 0, 1),
             Operation::Multiply,
             Expression::with_new_bounds(
                 Expression::new_op(
-                    Expression::new_id('x', 3, 4),
+                    Expression::new_id('x', 4, 5),
                     Operation::Add,
-                    Expression::new_const(0.4, 7, 10)
-                ), 2, 11
+                    Expression::new_const(0.4, 8, 11)
+                ), 2, 13
             )
         ));
     }
@@ -406,7 +406,7 @@ mod tests {
                 Expression::new_op(
                     Expression::new_id('x', 1, 2),
                     Operation::Add,
-                    Expression::new_id('y', 3, 4),
+                    Expression::new_id('y', 3, 4)
                 ), 0, 5
             ),
             Operation::Multiply,
@@ -418,7 +418,7 @@ mod tests {
                         Expression::new_op(
                             Expression::new_const(20., 9, 11),
                             Operation::Multiply,
-                            Expression::new_id('z', 11, 12),
+                            Expression::new_id('z', 11, 12)
                         ), 8, 13
                     )
                 ), 5, 14
@@ -426,89 +426,89 @@ mod tests {
         ));
     }
 
-    // #[test]
-    // fn extra_open_paren() {
-    //     let err = parse("(1*(2+3)").unwrap_err();
-    //     assert_eq!(err.message, "failed to match paren");
-    //     assert_eq!(err.start, 0);
-    //     assert_eq!(err.end, 1);
-    // }
+    #[test]
+    fn extra_open_paren() {
+        let err = parse("(1*(2+3)").unwrap_err();
+        assert_eq!(err.message, "failed to match paren");
+        assert_eq!(err.start, 0);
+        assert_eq!(err.end, 1);
+    }
 
-    // #[test]
-    // fn extra_close_paren() {
-    //     let err = parse("4*1+(2+3))").unwrap_err();
-    //     assert_eq!(err.message, "expected operation");
-    //     assert_eq!(err.start, 9);
-    //     assert_eq!(err.end, 10);
-    // }
+    #[test]
+    fn extra_close_paren() {
+        let err = parse("4*1+(2+3))").unwrap_err();
+        assert_eq!(err.message, "expected operation");
+        assert_eq!(err.start, 9);
+        assert_eq!(err.end, 10);
+    }
 
-    // #[test]
-    // fn implicit_mult_identifier() {
-    //     let tree = parse("2+4x+7").unwrap();
-    //     assert_eq!(tree, Expression::Op(
-    //         Box::new(Expression::Op(
-    //             Box::new(Expression::Constant(2.)),
-    //             Operation::Add,
-    //             Box::new(Expression::Op(
-    //                 Box::new(Expression::Constant(4.)),
-    //                 Operation::Multiply,
-    //                 Box::new(Expression::Identifier('x'))
-    //             )),
-    //         )),
-    //         Operation::Add,
-    //         Box::new(Expression::Constant(7.)),
-    //     ));
-    // }
+    #[test]
+    fn implicit_mult_identifier() {
+        let tree = parse("2+4x+7").unwrap();
+        assert_eq!(tree, Expression::new_op(
+            Expression::new_op(
+                Expression::new_const(2., 0, 1),
+                Operation::Add,
+                Expression::new_op(
+                    Expression::new_const(4., 2, 3),
+                    Operation::Multiply,
+                    Expression::new_id('x', 3, 4)
+                )
+            ),
+            Operation::Add,
+            Expression::new_const(7., 5, 6)
+        ));
+    }
 
-    // #[test]
-    // fn attempt_const_implicit_mult() {
-    //     let err = parse("x3").unwrap_err();
-    //     assert_eq!(err.message, "constant on RHS of implicit multiplication");
-    //     assert_eq!(err.start, 1);
-    //     assert_eq!(err.end, 2);
-    // }
+    #[test]
+    fn attempt_const_implicit_mult() {
+        let err = parse("x3").unwrap_err();
+        assert_eq!(err.message, "constant on RHS of implicit multiplication");
+        assert_eq!(err.start, 1);
+        assert_eq!(err.end, 2);
+    }
 
-    // #[test]
-    // fn empty_paren() {
-    //     let err = parse("x()").unwrap_err();
-    //     assert_eq!(err.message, "expected expression");
-    //     assert_eq!(err.start, 2);
-    //     assert_eq!(err.end, 3);
-    // }
+    #[test]
+    fn empty_paren() {
+        let err = parse("x()").unwrap_err();
+        assert_eq!(err.message, "expected expression");
+        assert_eq!(err.start, 2);
+        assert_eq!(err.end, 3);
+    }
 
-    // #[test]
-    // fn just_paren() {
-    //     let err = parse("(").unwrap_err();
-    //     assert_eq!(err.message, "failed to match paren");
-    //     assert_eq!(err.start, 0);
-    //     assert_eq!(err.end, 1);
-    // }
+    #[test]
+    fn just_paren() {
+        let err = parse("(").unwrap_err();
+        assert_eq!(err.message, "failed to match paren");
+        assert_eq!(err.start, 0);
+        assert_eq!(err.end, 1);
+    }
 
-    // #[test]
-    // fn complex_implicit_mult_identifier() {
-    //     let tree = parse("4x^2 + 2xy").unwrap();
-    //     assert_eq!(tree, Expression::Op(
-    //         Box::new(Expression::Op(
-    //             Box::new(Expression::Constant(4.)),
-    //             Operation::Multiply,
-    //             Box::new(Expression::Op(
-    //                 Box::new(Expression::Identifier('x')),
-    //                 Operation::Exponentiate,
-    //                 Box::new(Expression::Constant(2.))
-    //             )),
-    //         )),
-    //         Operation::Add,
-    //         Box::new(Expression::Op(
-    //             Box::new(Expression::Op(
-    //                 Box::new(Expression::Constant(2.)),
-    //                 Operation::Multiply,
-    //                 Box::new(Expression::Identifier('x'))
-    //             )),
-    //             Operation::Multiply,
-    //             Box::new(Expression::Identifier('y'))
-    //         )),
-    //     ));
-    // }
+    #[test]
+    fn complex_implicit_mult_identifier() {
+        let tree = parse("4x^2 + 2xy").unwrap();
+        assert_eq!(tree, Expression::new_op(
+            Expression::new_op(
+                Expression::new_const(4., 0, 1),
+                Operation::Multiply,
+                Expression::new_op(
+                    Expression::new_id('x', 1, 2),
+                    Operation::Exponentiate,
+                    Expression::new_const(2., 3, 4)
+                )
+            ),
+            Operation::Add,
+            Expression::new_op(
+                Expression::new_op(
+                    Expression::new_const(2., 7, 8),
+                    Operation::Multiply,
+                    Expression::new_id('x', 8, 9)
+                ),
+                Operation::Multiply,
+                Expression::new_id('y', 9, 10),
+            ),
+        ));
+    }
 
     // #[test]
     // fn complex_implicit_mult_parens() {

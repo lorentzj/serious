@@ -1104,16 +1104,16 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">simple_parens</span>() {
-        <span class="kw">let</span> <span class="ident">tree</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;2*(x + 0.4)&quot;</span>).<span class="ident">unwrap</span>();
+        <span class="kw">let</span> <span class="ident">tree</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;2*( x + 0.4 )&quot;</span>).<span class="ident">unwrap</span>();
         <span class="macro">assert_eq!</span>(<span class="ident">tree</span>, <span class="ident">Expression::new_op</span>(
             <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">0</span>, <span class="number">1</span>),
             <span class="ident">Operation::Multiply</span>,
             <span class="ident">Expression::with_new_bounds</span>(
                 <span class="ident">Expression::new_op</span>(
-                    <span class="ident">Expression::new_id</span>(<span class="string">&#39;x&#39;</span>, <span class="number">3</span>, <span class="number">4</span>),
+                    <span class="ident">Expression::new_id</span>(<span class="string">&#39;x&#39;</span>, <span class="number">4</span>, <span class="number">5</span>),
                     <span class="ident">Operation::Add</span>,
-                    <span class="ident">Expression::new_const</span>(<span class="number">0.4</span>, <span class="number">7</span>, <span class="number">10</span>)
-                ), <span class="number">2</span>, <span class="number">11</span>
+                    <span class="ident">Expression::new_const</span>(<span class="number">0.4</span>, <span class="number">8</span>, <span class="number">11</span>)
+                ), <span class="number">2</span>, <span class="number">13</span>
             )
         ));
     }
@@ -1126,7 +1126,7 @@
                 <span class="ident">Expression::new_op</span>(
                     <span class="ident">Expression::new_id</span>(<span class="string">&#39;x&#39;</span>, <span class="number">1</span>, <span class="number">2</span>),
                     <span class="ident">Operation::Add</span>,
-                    <span class="ident">Expression::new_id</span>(<span class="string">&#39;y&#39;</span>, <span class="number">3</span>, <span class="number">4</span>),
+                    <span class="ident">Expression::new_id</span>(<span class="string">&#39;y&#39;</span>, <span class="number">3</span>, <span class="number">4</span>)
                 ), <span class="number">0</span>, <span class="number">5</span>
             ),
             <span class="ident">Operation::Multiply</span>,
@@ -1138,7 +1138,7 @@
                         <span class="ident">Expression::new_op</span>(
                             <span class="ident">Expression::new_const</span>(<span class="number">20.</span>, <span class="number">9</span>, <span class="number">11</span>),
                             <span class="ident">Operation::Multiply</span>,
-                            <span class="ident">Expression::new_id</span>(<span class="string">&#39;z&#39;</span>, <span class="number">11</span>, <span class="number">12</span>),
+                            <span class="ident">Expression::new_id</span>(<span class="string">&#39;z&#39;</span>, <span class="number">11</span>, <span class="number">12</span>)
                         ), <span class="number">8</span>, <span class="number">13</span>
                     )
                 ), <span class="number">5</span>, <span class="number">14</span>
@@ -1146,89 +1146,89 @@
         ));
     }
 
-    <span class="comment">// #[test]</span>
-    <span class="comment">// fn extra_open_paren() {</span>
-    <span class="comment">//     let err = parse(&quot;(1*(2+3)&quot;).unwrap_err();</span>
-    <span class="comment">//     assert_eq!(err.message, &quot;failed to match paren&quot;);</span>
-    <span class="comment">//     assert_eq!(err.start, 0);</span>
-    <span class="comment">//     assert_eq!(err.end, 1);</span>
-    <span class="comment">// }</span>
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">extra_open_paren</span>() {
+        <span class="kw">let</span> <span class="ident">err</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;(1*(2+3)&quot;</span>).<span class="ident">unwrap_err</span>();
+        <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">message</span>, <span class="string">&quot;failed to match paren&quot;</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">start</span>, <span class="number">0</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">end</span>, <span class="number">1</span>);
+    }
 
-    <span class="comment">// #[test]</span>
-    <span class="comment">// fn extra_close_paren() {</span>
-    <span class="comment">//     let err = parse(&quot;4*1+(2+3))&quot;).unwrap_err();</span>
-    <span class="comment">//     assert_eq!(err.message, &quot;expected operation&quot;);</span>
-    <span class="comment">//     assert_eq!(err.start, 9);</span>
-    <span class="comment">//     assert_eq!(err.end, 10);</span>
-    <span class="comment">// }</span>
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">extra_close_paren</span>() {
+        <span class="kw">let</span> <span class="ident">err</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;4*1+(2+3))&quot;</span>).<span class="ident">unwrap_err</span>();
+        <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">message</span>, <span class="string">&quot;expected operation&quot;</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">start</span>, <span class="number">9</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">end</span>, <span class="number">10</span>);
+    }
 
-    <span class="comment">// #[test]</span>
-    <span class="comment">// fn implicit_mult_identifier() {</span>
-    <span class="comment">//     let tree = parse(&quot;2+4x+7&quot;).unwrap();</span>
-    <span class="comment">//     assert_eq!(tree, Expression::Op(</span>
-    <span class="comment">//         Box::new(Expression::Op(</span>
-    <span class="comment">//             Box::new(Expression::Constant(2.)),</span>
-    <span class="comment">//             Operation::Add,</span>
-    <span class="comment">//             Box::new(Expression::Op(</span>
-    <span class="comment">//                 Box::new(Expression::Constant(4.)),</span>
-    <span class="comment">//                 Operation::Multiply,</span>
-    <span class="comment">//                 Box::new(Expression::Identifier(&#39;x&#39;))</span>
-    <span class="comment">//             )),</span>
-    <span class="comment">//         )),</span>
-    <span class="comment">//         Operation::Add,</span>
-    <span class="comment">//         Box::new(Expression::Constant(7.)),</span>
-    <span class="comment">//     ));</span>
-    <span class="comment">// }</span>
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">implicit_mult_identifier</span>() {
+        <span class="kw">let</span> <span class="ident">tree</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;2+4x+7&quot;</span>).<span class="ident">unwrap</span>();
+        <span class="macro">assert_eq!</span>(<span class="ident">tree</span>, <span class="ident">Expression::new_op</span>(
+            <span class="ident">Expression::new_op</span>(
+                <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">0</span>, <span class="number">1</span>),
+                <span class="ident">Operation::Add</span>,
+                <span class="ident">Expression::new_op</span>(
+                    <span class="ident">Expression::new_const</span>(<span class="number">4.</span>, <span class="number">2</span>, <span class="number">3</span>),
+                    <span class="ident">Operation::Multiply</span>,
+                    <span class="ident">Expression::new_id</span>(<span class="string">&#39;x&#39;</span>, <span class="number">3</span>, <span class="number">4</span>)
+                )
+            ),
+            <span class="ident">Operation::Add</span>,
+            <span class="ident">Expression::new_const</span>(<span class="number">7.</span>, <span class="number">5</span>, <span class="number">6</span>)
+        ));
+    }
 
-    <span class="comment">// #[test]</span>
-    <span class="comment">// fn attempt_const_implicit_mult() {</span>
-    <span class="comment">//     let err = parse(&quot;x3&quot;).unwrap_err();</span>
-    <span class="comment">//     assert_eq!(err.message, &quot;constant on RHS of implicit multiplication&quot;);</span>
-    <span class="comment">//     assert_eq!(err.start, 1);</span>
-    <span class="comment">//     assert_eq!(err.end, 2);</span>
-    <span class="comment">// }</span>
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">attempt_const_implicit_mult</span>() {
+        <span class="kw">let</span> <span class="ident">err</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;x3&quot;</span>).<span class="ident">unwrap_err</span>();
+        <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">message</span>, <span class="string">&quot;constant on RHS of implicit multiplication&quot;</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">start</span>, <span class="number">1</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">end</span>, <span class="number">2</span>);
+    }
 
-    <span class="comment">// #[test]</span>
-    <span class="comment">// fn empty_paren() {</span>
-    <span class="comment">//     let err = parse(&quot;x()&quot;).unwrap_err();</span>
-    <span class="comment">//     assert_eq!(err.message, &quot;expected expression&quot;);</span>
-    <span class="comment">//     assert_eq!(err.start, 2);</span>
-    <span class="comment">//     assert_eq!(err.end, 3);</span>
-    <span class="comment">// }</span>
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">empty_paren</span>() {
+        <span class="kw">let</span> <span class="ident">err</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;x()&quot;</span>).<span class="ident">unwrap_err</span>();
+        <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">message</span>, <span class="string">&quot;expected expression&quot;</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">start</span>, <span class="number">2</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">end</span>, <span class="number">3</span>);
+    }
 
-    <span class="comment">// #[test]</span>
-    <span class="comment">// fn just_paren() {</span>
-    <span class="comment">//     let err = parse(&quot;(&quot;).unwrap_err();</span>
-    <span class="comment">//     assert_eq!(err.message, &quot;failed to match paren&quot;);</span>
-    <span class="comment">//     assert_eq!(err.start, 0);</span>
-    <span class="comment">//     assert_eq!(err.end, 1);</span>
-    <span class="comment">// }</span>
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">just_paren</span>() {
+        <span class="kw">let</span> <span class="ident">err</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;(&quot;</span>).<span class="ident">unwrap_err</span>();
+        <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">message</span>, <span class="string">&quot;failed to match paren&quot;</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">start</span>, <span class="number">0</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">end</span>, <span class="number">1</span>);
+    }
 
-    <span class="comment">// #[test]</span>
-    <span class="comment">// fn complex_implicit_mult_identifier() {</span>
-    <span class="comment">//     let tree = parse(&quot;4x^2 + 2xy&quot;).unwrap();</span>
-    <span class="comment">//     assert_eq!(tree, Expression::Op(</span>
-    <span class="comment">//         Box::new(Expression::Op(</span>
-    <span class="comment">//             Box::new(Expression::Constant(4.)),</span>
-    <span class="comment">//             Operation::Multiply,</span>
-    <span class="comment">//             Box::new(Expression::Op(</span>
-    <span class="comment">//                 Box::new(Expression::Identifier(&#39;x&#39;)),</span>
-    <span class="comment">//                 Operation::Exponentiate,</span>
-    <span class="comment">//                 Box::new(Expression::Constant(2.))</span>
-    <span class="comment">//             )),</span>
-    <span class="comment">//         )),</span>
-    <span class="comment">//         Operation::Add,</span>
-    <span class="comment">//         Box::new(Expression::Op(</span>
-    <span class="comment">//             Box::new(Expression::Op(</span>
-    <span class="comment">//                 Box::new(Expression::Constant(2.)),</span>
-    <span class="comment">//                 Operation::Multiply,</span>
-    <span class="comment">//                 Box::new(Expression::Identifier(&#39;x&#39;))</span>
-    <span class="comment">//             )),</span>
-    <span class="comment">//             Operation::Multiply,</span>
-    <span class="comment">//             Box::new(Expression::Identifier(&#39;y&#39;))</span>
-    <span class="comment">//         )),</span>
-    <span class="comment">//     ));</span>
-    <span class="comment">// }</span>
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">complex_implicit_mult_identifier</span>() {
+        <span class="kw">let</span> <span class="ident">tree</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;4x^2 + 2xy&quot;</span>).<span class="ident">unwrap</span>();
+        <span class="macro">assert_eq!</span>(<span class="ident">tree</span>, <span class="ident">Expression::new_op</span>(
+            <span class="ident">Expression::new_op</span>(
+                <span class="ident">Expression::new_const</span>(<span class="number">4.</span>, <span class="number">0</span>, <span class="number">1</span>),
+                <span class="ident">Operation::Multiply</span>,
+                <span class="ident">Expression::new_op</span>(
+                    <span class="ident">Expression::new_id</span>(<span class="string">&#39;x&#39;</span>, <span class="number">1</span>, <span class="number">2</span>),
+                    <span class="ident">Operation::Exponentiate</span>,
+                    <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">3</span>, <span class="number">4</span>)
+                )
+            ),
+            <span class="ident">Operation::Add</span>,
+            <span class="ident">Expression::new_op</span>(
+                <span class="ident">Expression::new_op</span>(
+                    <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">7</span>, <span class="number">8</span>),
+                    <span class="ident">Operation::Multiply</span>,
+                    <span class="ident">Expression::new_id</span>(<span class="string">&#39;x&#39;</span>, <span class="number">8</span>, <span class="number">9</span>)
+                ),
+                <span class="ident">Operation::Multiply</span>,
+                <span class="ident">Expression::new_id</span>(<span class="string">&#39;y&#39;</span>, <span class="number">9</span>, <span class="number">10</span>),
+            ),
+        ));
+    }
 
     <span class="comment">// #[test]</span>
     <span class="comment">// fn complex_implicit_mult_parens() {</span>
