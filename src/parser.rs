@@ -1,9 +1,6 @@
-use super::error::Error;
-use super::error::ErrorType;
+use super::error::{Error, ErrorType};
 pub use super::lexer::Operation;
-use super::lexer::Token;
-use super::lexer::TokenType;
-use super::lexer::lex;
+use super::lexer::{lex, Token, TokenType};
 
 #[derive(Debug, PartialEq)]
 pub enum ExpressionData {

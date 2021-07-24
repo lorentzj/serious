@@ -1,6 +1,5 @@
 use std::iter::FromIterator;
-use super::error::Error;
-use super::error::ErrorType;
+use super::error::{Error, ErrorType};
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum Operation {

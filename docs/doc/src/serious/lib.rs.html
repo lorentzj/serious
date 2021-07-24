@@ -36,29 +36,56 @@
 <span id="33">33</span>
 <span id="34">34</span>
 <span id="35">35</span>
+<span id="36">36</span>
+<span id="37">37</span>
+<span id="38">38</span>
+<span id="39">39</span>
+<span id="40">40</span>
+<span id="41">41</span>
+<span id="42">42</span>
+<span id="43">43</span>
+<span id="44">44</span>
+<span id="45">45</span>
+<span id="46">46</span>
+<span id="47">47</span>
+<span id="48">48</span>
+<span id="49">49</span>
+<span id="50">50</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="doccomment">//! Serious is a simple language for mathematical expressions.</span>
+<span class="doccomment">//! Serious is a simple language to evaluate concise mathematical expressions.</span>
 <span class="doccomment">//! </span>
-<span class="doccomment">//! - The numerical type is an f64</span>
-<span class="doccomment">//! - PEMDAS operations and unary minus are supported by `()`, `^`, `*`, `/`, `+`, `-`</span>
-<span class="doccomment">//! - Multiplication is implicit if an operator is omitted, unless the RHS is a constant.</span>
+<span class="doccomment">//! - The numerical type is f64.</span>
+<span class="doccomment">//! - 1-char identifiers are bound when evaluating an expression.</span>
+<span class="doccomment">//! - Multiplication is implicit if an operator is omitted, unless the RHS is a constant (e.g. `3x`, not `x3`).</span>
+<span class="doccomment">//! - All operations are infix binary, except for the unary minus (`-x` is interpreted as `0 - x`).</span>
+<span class="doccomment">//! - Operations are left-associative unless overridden by parentheses or precedence rules:</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! | Operator | Meaning      | Precedence</span>
+<span class="doccomment">//! | -------- | ------------ | ----------</span>
+<span class="doccomment">//! | `^`      | Exponentiate | 2</span>
+<span class="doccomment">//! | `*`      | Multipy      | 1</span>
+<span class="doccomment">//! | `/`      | Divide       | 1</span>
+<span class="doccomment">//! | `+`      | Add          | 0   </span>
+<span class="doccomment">//! | `-`      | Subtract     | 0</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! Example Usage:</span>
 <span class="doccomment">//! ```</span>
-<span class="doccomment">//! use serious::interpreter::interpret;</span>
-<span class="doccomment">//! use std::collections::HashMap;</span>
+<span class="doccomment">//! use serious::create_context;</span>
+<span class="doccomment">//! use serious::interpret;</span>
 <span class="doccomment">//! </span>
-<span class="doccomment">//! // create a hashmap of bound identifiers (each 1 char)</span>
-<span class="doccomment">//! let mut context: HashMap&lt;char, f64&gt; = HashMap::new();</span>
-<span class="doccomment">//! let (x, y) = (2., 3.);</span>
-<span class="doccomment">//! context.insert(&#39;x&#39;, x);</span>
-<span class="doccomment">//! context.insert(&#39;y&#39;, y);</span>
+<span class="doccomment">//! // create a context of bound variables</span>
+<span class="doccomment">//! let (x, y) = (12.34, 9999.);</span>
+<span class="doccomment">//! let context = create_context!{&#39;x&#39; =&gt; x, &#39;y&#39; =&gt; y};</span>
 <span class="doccomment">//!</span>
-<span class="doccomment">//! let result = interpret(&quot;x + y + 3&quot;, &amp;context).unwrap();</span>
-<span class="doccomment">//! assert_eq!(result, x + y + 3.);</span>
-
-<span class="doccomment">//! let result = interpret(&quot;3(2x + 1)&quot;, &amp;context).unwrap();</span>
-<span class="doccomment">//! assert_eq!(result, 3.*(2.*x + 1.));</span>
+<span class="doccomment">//! // evaluate an expression, given a context</span>
+<span class="doccomment">//! let result = interpret(&quot;x + y + 3.98&quot;, &amp;context).unwrap();</span>
+<span class="doccomment">//! assert_eq!(result, x + y + 3.98);</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! let result = interpret(&quot;3(-2x + 1)(x - 1)&quot;, &amp;context).unwrap();</span>
+<span class="doccomment">//! assert_eq!(result, 3.*(-2.*x + 1.)*(x - 1.));</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! let result = interpret(&quot;4x^(-2) + 12x^(0.3xy) - (56.78/x)^13.2&quot;, &amp;context).unwrap();</span>
+<span class="doccomment">//! assert_eq!(result, 4.*x.powf(-2.) + 12.*x.powf(0.3*x*y) - (56.78/x).powf(13.2));</span>
 <span class="doccomment">//! ```</span>
 
 <span class="doccomment">/// This module defines the type for expressions that fail to evaluate.</span>
@@ -71,6 +98,9 @@
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">parser</span>;
 
 <span class="doccomment">/// This module evaluates an abstract syntax tree into a value, given a context of bound identifiers.</span>
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">interpreter</span>;</pre></div>
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">interpreter</span>;
+
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">parser::parse</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">interpreter::interpret</span>;</pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="serious" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div>
     <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script></body></html>

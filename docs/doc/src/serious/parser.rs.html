@@ -717,16 +717,10 @@
 <span id="714">714</span>
 <span id="715">715</span>
 <span id="716">716</span>
-<span id="717">717</span>
-<span id="718">718</span>
-<span id="719">719</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="kw">use</span> <span class="kw">super</span><span class="ident">::error::Error</span>;
-<span class="kw">use</span> <span class="kw">super</span><span class="ident">::error::ErrorType</span>;
+<span class="kw">use</span> <span class="kw">super</span><span class="ident">::error</span>::{<span class="ident">Error</span>, <span class="ident">ErrorType</span>};
 <span class="kw">pub</span> <span class="kw">use</span> <span class="kw">super</span><span class="ident">::lexer::Operation</span>;
-<span class="kw">use</span> <span class="kw">super</span><span class="ident">::lexer::Token</span>;
-<span class="kw">use</span> <span class="kw">super</span><span class="ident">::lexer::TokenType</span>;
-<span class="kw">use</span> <span class="kw">super</span><span class="ident">::lexer::lex</span>;
+<span class="kw">use</span> <span class="kw">super</span><span class="ident">::lexer</span>::{<span class="ident">lex</span>, <span class="ident">Token</span>, <span class="ident">TokenType</span>};
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">ExpressionData</span> {

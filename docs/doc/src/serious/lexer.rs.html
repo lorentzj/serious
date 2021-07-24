@@ -247,11 +247,9 @@
 <span id="244">244</span>
 <span id="245">245</span>
 <span id="246">246</span>
-<span id="247">247</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std::iter::FromIterator</span>;
-<span class="kw">use</span> <span class="kw">super</span><span class="ident">::error::Error</span>;
-<span class="kw">use</span> <span class="kw">super</span><span class="ident">::error::ErrorType</span>;
+<span class="kw">use</span> <span class="kw">super</span><span class="ident">::error</span>::{<span class="ident">Error</span>, <span class="ident">ErrorType</span>};
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Operation</span> {
