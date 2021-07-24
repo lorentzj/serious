@@ -83,7 +83,15 @@ mod tests {
     }
 
     #[test]
-    fn div_zero() {
+    fn div_zero_1() {
+        let err = interpret("10/0", &HashMap::new()).unwrap_err();
+        assert_eq!(err.message, "division by zero");
+        assert_eq!(err.start, 0);
+        assert_eq!(err.end, 4);
+    }
+
+    #[test]
+    fn div_zero_2() {
         let err = interpret("2^(56 / (2 - 2)) * 3", &HashMap::new()).unwrap_err();
         assert_eq!(err.message, "division by zero");
         assert_eq!(err.start, 2);

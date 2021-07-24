@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["interpreter",""],["parser",""]]});
+initSidebarItems({"mod":[["error","This module defines the type for expressions that fail to evaluate."],["interpreter","This module evaluates an abstract syntax tree into a value, given a context of bound identifiers."],["lexer","This module converts input text into tokens for parsing."],["parser","This module converts tokens into an abstract syntax tree."]]});
