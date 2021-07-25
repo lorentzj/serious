@@ -1,5 +1,5 @@
 # Serious
-A simple language for mathematical expressions.
+A simple language for concise mathematical expressions.
 
  - The numerical type is `f64` (infinities and NaNs yield errors).
  - Variables are identified by characters within `[A-Za-z]`.
