@@ -726,8 +726,8 @@
 <span class="doccomment">/// The semantic content of an expression.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">ExpressionData</span> {
-    <span class="doccomment">/// An binary operation.</span>
-    <span class="doccomment">/// In the case of unary minus, the first expression will be a zero-width 0.</span>
+    <span class="doccomment">/// A binary operation.</span>
+    <span class="doccomment">/// In the case of unary minus, the left-hand side will be a zero-width 0.</span>
     <span class="ident">Op</span>(<span class="ident">Box</span><span class="op">&lt;</span><span class="ident">Expression</span><span class="op">&gt;</span>, <span class="ident">Operation</span>, <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">Expression</span><span class="op">&gt;</span>),
     <span class="doccomment">/// A literal constant.</span>
     <span class="ident">Constant</span>(<span class="ident">f64</span>),

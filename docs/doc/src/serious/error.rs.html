@@ -42,8 +42,9 @@
 <span id="39">39</span>
 <span id="40">40</span>
 <span id="41">41</span>
+<span id="42">42</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="doccomment">/// Categories for the errors from the parser or interpreter.</span>
+<span class="doccomment">/// Categories for the errors from [`Result::Err`]s of [`parse`](crate::parser::parse), [`interpret`](crate::interpreter::interpret), and [`interpret_tree`](crate::interpreter::interpret_tree).</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">ErrorType</span> {
     <span class="doccomment">/// Returned by [`parse`](crate::parser::parse)/[`interpret`](crate::interpreter::interpret) at unexpected tokens or unmatched parentheses.</span>
@@ -56,8 +57,9 @@
     <span class="ident">Overflow</span>
 }
 
-<span class="doccomment">/// Defines the type for expressions that fail to parse or evaluate.</span>
-<span class="doccomment">/// The `start` and `end` of the `Error` is the text span of the expression where the parser or interpreter failed.</span>
+<span class="doccomment">/// Defines the type for [`Result::Err`]s of [`parse`](crate::parser::parse), [`interpret`](crate::interpreter::interpret), and [`interpret_tree`](crate::interpreter::interpret_tree).</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// `start` and `end` constitute the text span of the erroneous [`Expression`](crate::parser::Expression).</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// ```</span>
 <span class="doccomment">/// use serious::{create_context, interpreter::interpret, error::Error, error::ErrorType};</span>

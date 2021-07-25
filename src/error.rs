@@ -1,4 +1,4 @@
-/// Categories for the errors from the parser or interpreter.
+/// Categories for the errors from [`Result::Err`]s of [`parse`](crate::parser::parse), [`interpret`](crate::interpreter::interpret), and [`interpret_tree`](crate::interpreter::interpret_tree).
 #[derive(Debug, PartialEq)]
 pub enum ErrorType {
     /// Returned by [`parse`](crate::parser::parse)/[`interpret`](crate::interpreter::interpret) at unexpected tokens or unmatched parentheses.
@@ -11,8 +11,9 @@ pub enum ErrorType {
     Overflow
 }
 
-/// Defines the type for expressions that fail to parse or evaluate.
-/// The `start` and `end` of the `Error` is the text span of the expression where the parser or interpreter failed.
+/// Defines the type for [`Result::Err`]s of [`parse`](crate::parser::parse), [`interpret`](crate::interpreter::interpret), and [`interpret_tree`](crate::interpreter::interpret_tree).
+///
+/// `start` and `end` constitute the text span of the erroneous [`Expression`](crate::parser::Expression).
 ///
 /// ```
 /// use serious::{create_context, interpreter::interpret, error::Error, error::ErrorType};

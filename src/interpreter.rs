@@ -1,7 +1,7 @@
 use super::parser::{parse, Expression, ExpressionData, Operation};
 use super::error::{Error, ErrorType};
 
-/// A hashmap from identifiers to values which can be applied to an expression using [`interpret`](crate::interpreter::interpret).
+/// A hashmap from identifiers to values which can be applied to an expression using [`interpret`](crate::interpreter::interpret)/[`interpret_tree`](crate::interpreter::interpret_tree).
 pub type Context = std::collections::HashMap<char, f64>;
 
 /// Creates a [`Context`](crate::interpreter::Context) which can be applied to an expression using [`interpret`](crate::interpreter::interpret)/[`interpret_tree`](crate::interpreter::interpret_tree).

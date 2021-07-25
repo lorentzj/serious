@@ -218,7 +218,7 @@
 <span class="kw">use</span> <span class="kw">super</span><span class="ident">::parser</span>::{<span class="ident">parse</span>, <span class="ident">Expression</span>, <span class="ident">ExpressionData</span>, <span class="ident">Operation</span>};
 <span class="kw">use</span> <span class="kw">super</span><span class="ident">::error</span>::{<span class="ident">Error</span>, <span class="ident">ErrorType</span>};
 
-<span class="doccomment">/// A hashmap from identifiers to values which can be applied to an expression using [`interpret`](crate::interpreter::interpret).</span>
+<span class="doccomment">/// A hashmap from identifiers to values which can be applied to an expression using [`interpret`](crate::interpreter::interpret)/[`interpret_tree`](crate::interpreter::interpret_tree).</span>
 <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">Context</span> <span class="op">=</span> <span class="ident">std::collections::HashMap</span><span class="op">&lt;</span><span class="ident">char</span>, <span class="ident">f64</span><span class="op">&gt;</span>;
 
 <span class="doccomment">/// Creates a [`Context`](crate::interpreter::Context) which can be applied to an expression using [`interpret`](crate::interpreter::interpret)/[`interpret_tree`](crate::interpreter::interpret_tree).</span>

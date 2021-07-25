@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["ErrorType","Categories for the errors from the parser or interpreter."]],"struct":[["Error","Defines the type for expressions that fail to parse or evaluate. The `start` and `end` of the `Error` is the text span of the expression where the parser or interpreter failed."]]});
+initSidebarItems({"enum":[["ErrorType","Categories for the errors from [`Result::Err`]s of `parse`, `interpret`, and `interpret_tree`."]],"struct":[["Error","Defines the type for [`Result::Err`]s of `parse`, `interpret`, and `interpret_tree`."]]});

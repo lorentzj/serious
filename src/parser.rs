@@ -5,8 +5,8 @@ use super::lexer::{lex, Token, TokenType};
 /// The semantic content of an expression.
 #[derive(Debug, PartialEq)]
 pub enum ExpressionData {
-    /// An binary operation.
-    /// In the case of unary minus, the first expression will be a zero-width 0.
+    /// A binary operation.
+    /// In the case of unary minus, the left-hand side will be a zero-width 0.
     Op(Box<Expression>, Operation, Box<Expression>),
     /// A literal constant.
     Constant(f64),
