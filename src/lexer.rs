@@ -1,13 +1,21 @@
 use std::iter::FromIterator;
 use super::error::{Error, ErrorType};
 
+/// The operations in the Serious language.
+/// - Any NaN result or attempted division by 0 will yield an [`UndefinedOperation`](crate::error::ErrorType::UndefinedOperation) error.
+/// - Any infinite result will yield an [`Overflow`](crate::error::ErrorType::Overflow) error.
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum Operation {
+    /// Defined by [f64::powf].
     Exponentiate,
-    Divide,
+    /// Defined by the arithmetic operator [`*`](core::ops::Mul) over [`f64`].
     Multiply,
-    Subtract,
-    Add
+    /// Defined by the arithmetic operator [`/`](core::ops::Div) over [`f64`].
+    Divide,
+    /// Defined by the arithmetic operator [`+`](core::ops::Add) over [`f64`].
+    Add,
+    /// Defined by the arithmetic operator [`-`](core::ops::Sub) over [`f64`].
+    Subtract
 }
 
 #[derive(Debug, PartialEq)]

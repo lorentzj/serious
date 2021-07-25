@@ -259,17 +259,33 @@
 <span id="256">256</span>
 <span id="257">257</span>
 <span id="258">258</span>
+<span id="259">259</span>
+<span id="260">260</span>
+<span id="261">261</span>
+<span id="262">262</span>
+<span id="263">263</span>
+<span id="264">264</span>
+<span id="265">265</span>
+<span id="266">266</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std::iter::FromIterator</span>;
 <span class="kw">use</span> <span class="kw">super</span><span class="ident">::error</span>::{<span class="ident">Error</span>, <span class="ident">ErrorType</span>};
 
+<span class="doccomment">/// The operations in the Serious language.</span>
+<span class="doccomment">/// - Any NaN result or attempted division by 0 will yield an [`UndefinedOperation`](crate::error::ErrorType::UndefinedOperation) error.</span>
+<span class="doccomment">/// - Any infinite result will yield an [`Overflow`](crate::error::ErrorType::Overflow) error.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Operation</span> {
+    <span class="doccomment">/// Defined by [f64::powf].</span>
     <span class="ident">Exponentiate</span>,
-    <span class="ident">Divide</span>,
+    <span class="doccomment">/// Defined by the arithmetic operator [`*`](core::ops::Mul) over [`f64`].</span>
     <span class="ident">Multiply</span>,
-    <span class="ident">Subtract</span>,
-    <span class="ident">Add</span>
+    <span class="doccomment">/// Defined by the arithmetic operator [`/`](core::ops::Div) over [`f64`].</span>
+    <span class="ident">Divide</span>,
+    <span class="doccomment">/// Defined by the arithmetic operator [`+`](core::ops::Add) over [`f64`].</span>
+    <span class="ident">Add</span>,
+    <span class="doccomment">/// Defined by the arithmetic operator [`-`](core::ops::Sub) over [`f64`].</span>
+    <span class="ident">Subtract</span>
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>)]</span>

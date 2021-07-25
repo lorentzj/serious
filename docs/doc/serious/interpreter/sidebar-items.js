@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["interpret","Evaluates a Serious expression."],["interpret_tree","Evaluates a pre-parsed Serious expression."]],"type":[["Context","A hashmap from identifiers to values which can be applied to an expression using serious::interpret."]]});
+initSidebarItems({"fn":[["interpret","Evaluates a Serious expression."],["interpret_tree","Evaluates a pre-parsed Serious expression."]],"type":[["Context","A hashmap from identifiers to values which can be applied to an expression using `interpret`."]]});

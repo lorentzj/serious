@@ -2,31 +2,44 @@ use super::error::{Error, ErrorType};
 pub use super::lexer::Operation;
 use super::lexer::{lex, Token, TokenType};
 
+/// The semantic content of an expression.
 #[derive(Debug, PartialEq)]
 pub enum ExpressionData {
+    /// An binary operation.
+    /// In the case of unary minus, the first expression will be a zero-width 0.
     Op(Box<Expression>, Operation, Box<Expression>),
+    /// A literal constant.
     Constant(f64),
-    Identifier(char),
+    /// A named identifier.
+    Identifier(char)
 }
 
+/// The output of a successful parse; contains sub-expressions in a tree structure.
 #[derive(Debug, PartialEq)]
 pub struct Expression {
+    /// The semantic content of the expression.
     pub data: ExpressionData,
+    /// The start of the expression in the original text.
     pub start: usize,
+    /// The end of the expression in the original text.
     pub end: usize
 }
 
 impl Expression {
+    /// Create an expression for a constant literal.
     pub fn new_const(val: f64, start: usize, end: usize) -> Expression {
         let data = ExpressionData::Constant(val);
         Expression { data, start, end }
     }
 
+    /// Create an expression for an identifier.
     pub fn new_id(name: char, start: usize, end: usize) -> Expression {
         let data = ExpressionData::Identifier(name);
         Expression { data, start, end }
     }
 
+    /// Create an expression given an operation and its two operands.
+    /// The expression bounds will be recalcalated as the start of the left-hand side and the end of the right-hand side.
     pub fn new_op(lhs: Expression, op: Operation, rhs: Expression) -> Expression {
         let start = lhs.start;
         let end = rhs.end;
@@ -34,6 +47,8 @@ impl Expression {
         Expression { data, start, end }
     }
 
+    /// Re-assign the `start` and `end` positions of an expression.
+    /// This is useful for including the parentheses around a sub-expression.
     pub fn with_bounds(self, start: usize, end: usize) -> Expression {
         Expression { data: self.data, start, end }
     }
@@ -105,7 +120,7 @@ fn parse_tokens(tokens: &[Token], start: usize, expect_close_paren: bool) -> Res
                     "constant on RHS of implicit multiplication".to_string(),
                     tokens[i].start,
                     tokens[i].end
-                ))    
+                ))
             },
             TokenType::CloseParen => {
                 if expect_close_paren {
@@ -433,12 +448,12 @@ mod tests {
 
     #[test]
     fn extra_close_paren() {
-        let err = parse("4*1+(2+3))").unwrap_err();
+        let err = parse("3 + ((4*1)^2+(2+3))) + 6").unwrap_err();
         assert_eq!(err, Error::new(
             ErrorType::BadParse,
             "expected expression".to_string(),
-            9,
-            10
+            19,
+            20
         ));
     }
 

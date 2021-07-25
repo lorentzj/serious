@@ -1,24 +1,22 @@
 //! Serious is a simple language to evaluate concise mathematical expressions.
 //!
-//! - The numerical type is [f64](https://doc.rust-lang.org/std/primitive.f64.html) (infinities and NaNs raise errors).
+//! - The numerical type is [`f64`] (infinities and NaNs raise errors).
 //! - Variables are identified by characters within `[A-Za-z]`.
 //! - Multiplication is implicit if an operator is omitted, unless the RHS is a constant.
-//!     - `3x` means `3*x`.
-//!     - `x3` is a parse error.
 //! - All operations are infix binary, except for the unary minus.
 //! - Operations are left-associative unless overridden by parentheses or precedence rules:
 //!
-//! | Operator | Meaning      | Precedence
-//! | -------- | ------------ | ----------
-//! | `^`      | Exponentiate | 2
-//! | `*`      | Multipy      | 1
-//! | `/`      | Divide       | 1
-//! | `+`      | Add          | 0   
-//! | `-`      | Subtract     | 0
+//! | Operator | Meaning                                                | Precedence
+//! | -------- | ------------------------------------------------------ | ----------
+//! | `^`      | [Exponentiate](crate::parser::Operation::Exponentiate) | 2
+//! | `*`      | [Multiply](crate::parser::Operation::Multiply)         | 1
+//! | `/`      | [Divide](crate::parser::Operation::Divide)             | 1
+//! | `+`      | [Add](crate::parser::Operation::Add)                   | 0
+//! | `-`      | [Subtract](crate::parser::Operation::Subtract)         | 0
 //!
-//! Example Usage:
+//! # Example Usage:
 //! ```
-//! use serious::{create_context, interpret};
+//! use serious::{create_context, interpreter::interpret};
 //!
 //! // create a context of bound variables
 //! let (x, y) = (12.34, 9999.);
@@ -29,23 +27,14 @@
 //! assert_eq!(result, y.powf(2.)*(-2.*x.powf(3.) + 1.)/5.2);
 //! ```
 
-/// Defines the type for expressions that fail to evaluate.
-pub mod error;
-
-/// Converts input text into tokens for parsing.
+/// Converts input text into tokens for parsing (used in [parser](crate::parser)).
 mod lexer;
 
-/// Converts tokens into an abstract syntax tree.
+/// Converts text into an [`Expression`](crate::parser::Expression) (an abstract syntax tree).
 pub mod parser;
 
-/// Evaluates an abstract syntax, given a context of bound identifiers.
+/// Evaluates an [`Expression`](crate::parser::Expression), given a [`Context`](crate::interpreter::Context) of bound identifiers.
 pub mod interpreter;
 
-pub use parser::parse;
-
-pub use interpreter::Context;
-pub use interpreter::interpret;
-pub use interpreter::interpret_tree;
-
-pub use error::Error;
-pub use error::ErrorType;
+/// Defines the type for failed [`Result`]s of [`parse`](crate::parser::parse), [`interpret`](crate::interpreter::interpret), and [`interpret_tree`](crate::interpreter::interpret_tree).
+pub mod error;

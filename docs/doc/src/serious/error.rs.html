@@ -22,15 +22,55 @@
 <span id="19">19</span>
 <span id="20">20</span>
 <span id="21">21</span>
+<span id="22">22</span>
+<span id="23">23</span>
+<span id="24">24</span>
+<span id="25">25</span>
+<span id="26">26</span>
+<span id="27">27</span>
+<span id="28">28</span>
+<span id="29">29</span>
+<span id="30">30</span>
+<span id="31">31</span>
+<span id="32">32</span>
+<span id="33">33</span>
+<span id="34">34</span>
+<span id="35">35</span>
+<span id="36">36</span>
+<span id="37">37</span>
+<span id="38">38</span>
+<span id="39">39</span>
+<span id="40">40</span>
+<span id="41">41</span>
 </pre><div class="example-wrap"><pre class="rust ">
+<span class="doccomment">/// Categories for the errors from the parser or interpreter.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">ErrorType</span> {
+    <span class="doccomment">/// Returned by [`parse`](crate::parser::parse)/[`interpret`](crate::interpreter::interpret) at unexpected tokens or unmatched parentheses.</span>
     <span class="ident">BadParse</span>,
+    <span class="doccomment">/// Returned by [`interpret`](crate::interpreter::interpret)/[`interpret_tree`](crate::interpreter::interpret_tree) if an [`Identifier`](crate::parser::ExpressionData::Identifier) is not bound in the [`Context`](crate::interpreter::Context).</span>
     <span class="ident">UnboundIdentifier</span>,
+    <span class="doccomment">/// Returned by [`interpret`](crate::interpreter::interpret)/[`interpret_tree`](crate::interpreter::interpret_tree) if an [`Operation`](crate::parser::Operation) returns NaN or a division by 0 is attempted.</span>
     <span class="ident">UndefinedOperation</span>,
+    <span class="doccomment">/// Returned by [`parse`](crate::parser::parse)/[`interpret`](crate::interpreter::interpret) if a literal constant is too large to fit in an [`f64`] or by [`interpret`](crate::interpreter::interpret)/[`interpret_tree`](crate::interpreter::interpret_tree) if an operation returns an infinity.</span>
     <span class="ident">Overflow</span>
 }
 
+<span class="doccomment">/// Defines the type for expressions that fail to parse or evaluate.</span>
+<span class="doccomment">/// The `start` and `end` of the `Error` is the text span of the expression where the parser or interpreter failed.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// ```</span>
+<span class="doccomment">/// use serious::{create_context, interpreter::interpret, error::Error, error::ErrorType};</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// let err = interpret(&quot;6 + 4.3/(25 - 5^2)&quot;, &amp;create_context!{}).unwrap_err();</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// assert_eq!(err, Error::new(</span>
+<span class="doccomment">///     ErrorType::UndefinedOperation,</span>
+<span class="doccomment">///     &quot;4.3/0 is undefined&quot;.to_string(),</span>
+<span class="doccomment">///     4,</span>
+<span class="doccomment">///     18</span>
+<span class="doccomment">/// ));</span>
+<span class="doccomment">/// ```</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Error</span> {
     <span class="kw">pub</span> <span class="ident">error_type</span>: <span class="ident">ErrorType</span>,

@@ -41,39 +41,26 @@
 <span id="38">38</span>
 <span id="39">39</span>
 <span id="40">40</span>
-<span id="41">41</span>
-<span id="42">42</span>
-<span id="43">43</span>
-<span id="44">44</span>
-<span id="45">45</span>
-<span id="46">46</span>
-<span id="47">47</span>
-<span id="48">48</span>
-<span id="49">49</span>
-<span id="50">50</span>
-<span id="51">51</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Serious is a simple language to evaluate concise mathematical expressions.</span>
 <span class="doccomment">//!</span>
-<span class="doccomment">//! - The numerical type is [f64](https://doc.rust-lang.org/std/primitive.f64.html) (infinities and NaNs raise errors).</span>
+<span class="doccomment">//! - The numerical type is [`f64`] (infinities and NaNs raise errors).</span>
 <span class="doccomment">//! - Variables are identified by characters within `[A-Za-z]`.</span>
 <span class="doccomment">//! - Multiplication is implicit if an operator is omitted, unless the RHS is a constant.</span>
-<span class="doccomment">//!     - `3x` means `3*x`.</span>
-<span class="doccomment">//!     - `x3` is a parse error.</span>
 <span class="doccomment">//! - All operations are infix binary, except for the unary minus.</span>
 <span class="doccomment">//! - Operations are left-associative unless overridden by parentheses or precedence rules:</span>
 <span class="doccomment">//!</span>
-<span class="doccomment">//! | Operator | Meaning      | Precedence</span>
-<span class="doccomment">//! | -------- | ------------ | ----------</span>
-<span class="doccomment">//! | `^`      | Exponentiate | 2</span>
-<span class="doccomment">//! | `*`      | Multipy      | 1</span>
-<span class="doccomment">//! | `/`      | Divide       | 1</span>
-<span class="doccomment">//! | `+`      | Add          | 0   </span>
-<span class="doccomment">//! | `-`      | Subtract     | 0</span>
+<span class="doccomment">//! | Operator | Meaning                                                | Precedence</span>
+<span class="doccomment">//! | -------- | ------------------------------------------------------ | ----------</span>
+<span class="doccomment">//! | `^`      | [Exponentiate](crate::parser::Operation::Exponentiate) | 2</span>
+<span class="doccomment">//! | `*`      | [Multiply](crate::parser::Operation::Multiply)         | 1</span>
+<span class="doccomment">//! | `/`      | [Divide](crate::parser::Operation::Divide)             | 1</span>
+<span class="doccomment">//! | `+`      | [Add](crate::parser::Operation::Add)                   | 0</span>
+<span class="doccomment">//! | `-`      | [Subtract](crate::parser::Operation::Subtract)         | 0</span>
 <span class="doccomment">//!</span>
-<span class="doccomment">//! Example Usage:</span>
+<span class="doccomment">//! # Example Usage:</span>
 <span class="doccomment">//! ```</span>
-<span class="doccomment">//! use serious::{create_context, interpret};</span>
+<span class="doccomment">//! use serious::{create_context, interpreter::interpret};</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! // create a context of bound variables</span>
 <span class="doccomment">//! let (x, y) = (12.34, 9999.);</span>
@@ -84,25 +71,16 @@
 <span class="doccomment">//! assert_eq!(result, y.powf(2.)*(-2.*x.powf(3.) + 1.)/5.2);</span>
 <span class="doccomment">//! ```</span>
 
-<span class="doccomment">/// Defines the type for expressions that fail to evaluate.</span>
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">error</span>;
-
-<span class="doccomment">/// Converts input text into tokens for parsing.</span>
+<span class="doccomment">/// Converts input text into tokens for parsing (used in [parser](crate::parser)).</span>
 <span class="kw">mod</span> <span class="ident">lexer</span>;
 
-<span class="doccomment">/// Converts tokens into an abstract syntax tree.</span>
+<span class="doccomment">/// Converts text into an [`Expression`](crate::parser::Expression) (an abstract syntax tree).</span>
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">parser</span>;
 
-<span class="doccomment">/// Evaluates an abstract syntax, given a context of bound identifiers.</span>
+<span class="doccomment">/// Evaluates an [`Expression`](crate::parser::Expression), given a [`Context`](crate::interpreter::Context) of bound identifiers.</span>
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">interpreter</span>;
 
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">parser::parse</span>;
-
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">interpreter::Context</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">interpreter::interpret</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">interpreter::interpret_tree</span>;
-
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">error::Error</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">error::ErrorType</span>;</pre></div>
+<span class="doccomment">/// Defines the type for failed [`Result`]s of [`parse`](crate::parser::parse), [`interpret`](crate::interpreter::interpret), and [`interpret_tree`](crate::interpreter::interpret_tree).</span>
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">error</span>;</pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="serious" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div>
     <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script></body></html>

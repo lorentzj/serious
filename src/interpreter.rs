@@ -1,12 +1,12 @@
 use super::parser::{parse, Expression, ExpressionData, Operation};
 use super::error::{Error, ErrorType};
 
-/// A hashmap from identifiers to values which can be applied to an expression using [serious::interpret](interpret).
+/// A hashmap from identifiers to values which can be applied to an expression using [`interpret`](crate::interpreter::interpret).
 pub type Context = std::collections::HashMap<char, f64>;
 
-/// Creates a [serious::Context](Context) which can be applied to an expression using [serious::interpret](interpret).
+/// Creates a [`Context`](crate::interpreter::Context) which can be applied to an expression using [`interpret`](crate::interpreter::interpret)/[`interpret_tree`](crate::interpreter::interpret_tree).
 /// 
-/// Each `id` (char) will bound to its corresponding `val` (f64).
+/// Each `id` will bound to its corresponding `val`.
 ///
 /// ```
 /// use serious::{interpreter::Context, create_context};
@@ -53,36 +53,37 @@ pub fn interpret_tree(tree: Expression, context: &Context) -> Result<f64, Error>
                 Operation::Multiply => lhs * rhs,
                 Operation::Divide => {
                     if rhs == 0. {
-                        return Err(Error::new(
-                            ErrorType::UndefinedOperation,
-                            "division by zero is undefined".to_string(),
-                            tree.start,
-                            tree.end
-                        ))
+                        f64::NAN
                     } else {
                         lhs/rhs
                     }
                 }
-                Operation::Exponentiate => {
-                    if lhs == 0. && rhs == 0. {
-                        f64::NAN
-                    } else {
-                        lhs.powf(rhs)
-                    }
-                }
+                Operation::Exponentiate => lhs.powf(rhs)
+            };
+
+            let lhs_rep  = if lhs < 0. {
+                format!("({})", lhs)
+            } else {
+                format!("{}", lhs)
+            };
+
+            let rhs_rep  = if rhs < 0. {
+                format!("({})", rhs)
+            } else {
+                format!("{}", rhs)
             };
 
             if result.is_infinite() {
                 Err(Error::new(
                     ErrorType::Overflow,
-                    format!("({}) {} ({}) overflowed f64", lhs, op_representation(op), rhs),
+                    format!("{}{}{} overflowed f64", lhs_rep, op_representation(op), rhs_rep),
                     tree.start,
                     tree.end
                 ))
             } else if result.is_nan() {
                 Err(Error::new(
                     ErrorType::UndefinedOperation,
-                    format!("({}) {} ({}) is undefined", lhs, op_representation(op), rhs),
+                    format!("{}{}{} is undefined", lhs_rep, op_representation(op), rhs_rep),
                     tree.start,
                     tree.end
                 ))
@@ -149,7 +150,7 @@ mod tests {
         let err = interpret("10/0", &create_context!{}).unwrap_err();
         assert_eq!(err, Error::new(
             ErrorType::UndefinedOperation,
-            "division by zero is undefined".to_string(),
+            "10/0 is undefined".to_string(),
             0,
             4
         ));
@@ -160,7 +161,7 @@ mod tests {
         let err = interpret("2^(56 / (2 - 2)) * 3", &create_context!{}).unwrap_err();
         assert_eq!(err, Error::new(
             ErrorType::UndefinedOperation,
-            "division by zero is undefined".to_string(),
+            "56/0 is undefined".to_string(),
             2,
             16
         ));
@@ -193,7 +194,7 @@ mod tests {
         let err = interpret("4 + (1 - 2)^0.5", &create_context!{}).unwrap_err();
         assert_eq!(err, Error::new(
             ErrorType::UndefinedOperation,
-            "(-1) ^ (0.5) is undefined".to_string(),
+            "(-1)^0.5 is undefined".to_string(),
             4,
             15
         ));
@@ -204,7 +205,7 @@ mod tests {
         let err = interpret("3 + (9 + 1)^999", &create_context!{}).unwrap_err();
         assert_eq!(err, Error::new(
             ErrorType::Overflow,
-            "(10) ^ (999) overflowed f64".to_string(),
+            "10^999 overflowed f64".to_string(),
             4,
             15
         ));
