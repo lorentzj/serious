@@ -1,7 +1,7 @@
 # Serious
 A simple language for mathematical expressions.
 
- - The numerical type is [`f64`] (infinities and NaNs yield errors).
+ - The numerical type is `f64` (infinities and NaNs yield errors).
  - Variables are identified by characters within `[A-Za-z]`.
  - Multiplication is implicit where an operator is omitted.
  - All operations are infix binary, except for the unary minus.
@@ -10,7 +10,7 @@ A simple language for mathematical expressions.
  ## Full Documentation:
  https://lorentzj.github.io/serious/doc/serious/
 
- # Example Usage:
+ ## Example Usage:
  ```rust
  use serious::{create_context, interpreter::interpret};
 
