@@ -237,19 +237,23 @@ mod tests {
     #[test]
     fn empty() {
         let err = parse("").unwrap_err();
-        assert_eq!(err.error_type, ErrorType::BadParse);
-        assert_eq!(err.message, "expected token");
-        assert_eq!(err.start, 0);
-        assert_eq!(err.end, 1);
+        assert_eq!(err, Error::new(
+            ErrorType::BadParse,
+            "expected token".to_string(),
+            0,
+            1
+        ));
     }
 
     #[test]
     fn err_from_lex() {
         let err = parse("2*0.2.3").unwrap_err();
-        assert_eq!(err.error_type, ErrorType::BadParse);
-        assert_eq!(err.message, "invalid float literal");
-        assert_eq!(err.start, 2);
-        assert_eq!(err.end, 7);
+        assert_eq!(err, Error::new(
+            ErrorType::BadParse,
+            "invalid float literal".to_string(),
+            2,
+            7
+        ));
     }
 
     #[test]
@@ -419,19 +423,23 @@ mod tests {
     #[test]
     fn extra_open_paren() {
         let err = parse("(1*(2+3)").unwrap_err();
-        assert_eq!(err.error_type, ErrorType::BadParse);
-        assert_eq!(err.message, "failed to match paren");
-        assert_eq!(err.start, 0);
-        assert_eq!(err.end, 1);
+        assert_eq!(err, Error::new(
+            ErrorType::BadParse,
+            "failed to match paren".to_string(),
+            0,
+            1
+        ));
     }
 
     #[test]
     fn extra_close_paren() {
         let err = parse("4*1+(2+3))").unwrap_err();
-        assert_eq!(err.error_type, ErrorType::BadParse);
-        assert_eq!(err.message, "expected expression");
-        assert_eq!(err.start, 9);
-        assert_eq!(err.end, 10);
+        assert_eq!(err, Error::new(
+            ErrorType::BadParse,
+            "expected expression".to_string(),
+            9,
+            10
+        ));
     }
 
     #[test]
@@ -455,28 +463,34 @@ mod tests {
     #[test]
     fn attempt_const_implicit_mult() {
         let err = parse("x3").unwrap_err();
-        assert_eq!(err.error_type, ErrorType::BadParse);
-        assert_eq!(err.message, "constant on RHS of implicit multiplication");
-        assert_eq!(err.start, 1);
-        assert_eq!(err.end, 2);
+        assert_eq!(err, Error::new(
+            ErrorType::BadParse,
+            "constant on RHS of implicit multiplication".to_string(),
+            1,
+            2
+        ));
     }
 
     #[test]
     fn empty_paren() {
         let err = parse("x()").unwrap_err();
-        assert_eq!(err.error_type, ErrorType::BadParse);
-        assert_eq!(err.message, "expected expression");
-        assert_eq!(err.start, 2);
-        assert_eq!(err.end, 3);
+        assert_eq!(err, Error::new(
+            ErrorType::BadParse,
+            "expected expression".to_string(),
+            2,
+            3
+        ));
     }
 
     #[test]
     fn just_paren() {
         let err = parse("(").unwrap_err();
-        assert_eq!(err.error_type, ErrorType::BadParse);
-        assert_eq!(err.message, "failed to match paren");
-        assert_eq!(err.start, 0);
-        assert_eq!(err.end, 1);
+        assert_eq!(err, Error::new(
+            ErrorType::BadParse,
+            "failed to match paren".to_string(),
+            0,
+            1
+        ));
     }
 
     #[test]
@@ -626,10 +640,12 @@ mod tests {
     #[test]
     fn unary_minus_error() {
         let err = parse("3*-2x").unwrap_err();
-        assert_eq!(err.error_type, ErrorType::BadParse);
-        assert_eq!(err.message, "expected expression; wrap in parens for unary minus");
-        assert_eq!(err.start, 2);
-        assert_eq!(err.end, 3);
+        assert_eq!(err, Error::new(
+            ErrorType::BadParse,
+            "expected expression; wrap in parens for unary minus".to_string(),
+            2,
+            3
+        ));
     }
 
     #[test]

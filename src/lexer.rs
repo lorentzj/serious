@@ -137,10 +137,12 @@ mod tests {
     #[test]
     fn empty() {
         let err = lex("").unwrap_err();
-        assert_eq!(err.error_type, ErrorType::BadParse);
-        assert_eq!(err.message, "expected token");
-        assert_eq!(err.start, 0);
-        assert_eq!(err.end, 1);
+        assert_eq!(err, Error::new(
+            ErrorType::BadParse,
+            "expected token".to_string(),
+            0,
+            1
+        ));
     }
 
     #[test]
@@ -149,28 +151,34 @@ mod tests {
         too_big.push_str("0");
 
         let err = lex(too_big.as_str()).unwrap_err();
-        assert_eq!(err.error_type, ErrorType::Overflow);
-        assert_eq!(err.message, "number overflowed f64");
-        assert_eq!(err.start, 0);
-        assert_eq!(err.end, 310);
+        assert_eq!(err, Error::new(
+            ErrorType::Overflow,
+            "number overflowed f64".to_string(),
+            0,
+            310
+        ));
     }
 
     #[test]
     fn invalid_float_extra_decimal() {
         let err = lex("0.2.3").unwrap_err();
-        assert_eq!(err.error_type, ErrorType::BadParse);
-        assert_eq!(err.message, "invalid float literal");
-        assert_eq!(err.start, 0);
-        assert_eq!(err.end, 5);
+        assert_eq!(err, Error::new(
+            ErrorType::BadParse,
+            "invalid float literal".to_string(),
+            0,
+            5
+        ));
     }
 
     #[test]
     fn invalid_float_only_decimal() {
         let err = lex("abc.").unwrap_err();
-        assert_eq!(err.error_type, ErrorType::BadParse);
-        assert_eq!(err.message, "invalid float literal");
-        assert_eq!(err.start, 3);
-        assert_eq!(err.end, 4);
+        assert_eq!(err, Error::new(
+            ErrorType::BadParse,
+            "invalid float literal".to_string(),
+            3,
+            4
+        ));
     }
 
     #[test]

@@ -123,10 +123,12 @@ mod tests {
     #[test]
     fn err_from_parse() {
         let err = interpret("(1*(2+3)", &create_context!{}).unwrap_err();
-        assert_eq!(err.message, "failed to match paren");
-        assert_eq!(err.error_type, ErrorType::BadParse);
-        assert_eq!(err.start, 0);
-        assert_eq!(err.end, 1);
+        assert_eq!(err, Error::new(
+            ErrorType::BadParse,
+            "failed to match paren".to_string(),
+            0,
+            1
+        ));
     }
 
     #[test]
@@ -134,28 +136,34 @@ mod tests {
         let context = create_context!{'x' => 3.};
 
         let err = interpret("3 + xy", &context).unwrap_err();
-        assert_eq!(err.error_type, ErrorType::UnboundIdentifier);
-        assert_eq!(err.message, "identifier 'y' is not bound");
-        assert_eq!(err.start, 5);
-        assert_eq!(err.end, 6);
+        assert_eq!(err, Error::new(
+            ErrorType::UnboundIdentifier,
+            "identifier 'y' is not bound".to_string(),
+            5,
+            6
+        ));
     }
 
     #[test]
     fn div_zero_1() {
         let err = interpret("10/0", &create_context!{}).unwrap_err();
-        assert_eq!(err.error_type, ErrorType::UndefinedOperation);
-        assert_eq!(err.message, "division by zero is undefined");
-        assert_eq!(err.start, 0);
-        assert_eq!(err.end, 4);
+        assert_eq!(err, Error::new(
+            ErrorType::UndefinedOperation,
+            "division by zero is undefined".to_string(),
+            0,
+            4
+        ));
     }
 
     #[test]
     fn div_zero_2() {
         let err = interpret("2^(56 / (2 - 2)) * 3", &create_context!{}).unwrap_err();
-        assert_eq!(err.error_type, ErrorType::UndefinedOperation);
-        assert_eq!(err.message, "division by zero is undefined");
-        assert_eq!(err.start, 2);
-        assert_eq!(err.end, 16);
+        assert_eq!(err, Error::new(
+            ErrorType::UndefinedOperation,
+            "division by zero is undefined".to_string(),
+            2,
+            16
+        ));
     }
 
     #[test]
@@ -183,18 +191,22 @@ mod tests {
     #[test]
     fn bad_pow() {
         let err = interpret("4 + (1 - 2)^0.5", &create_context!{}).unwrap_err();
-        assert_eq!(err.error_type, ErrorType::UndefinedOperation);
-        assert_eq!(err.message, "(-1) ^ (0.5) is undefined");
-        assert_eq!(err.start, 4);
-        assert_eq!(err.end, 15);
+        assert_eq!(err, Error::new(
+            ErrorType::UndefinedOperation,
+            "(-1) ^ (0.5) is undefined".to_string(),
+            4,
+            15
+        ));
     }
 
     #[test]
     fn eval_to_infinity() {
         let err = interpret("3 + (9 + 1)^999", &create_context!{}).unwrap_err();
-        assert_eq!(err.error_type, ErrorType::Overflow);
-        assert_eq!(err.message, "(10) ^ (999) overflowed f64");
-        assert_eq!(err.start, 4);
-        assert_eq!(err.end, 15);
+        assert_eq!(err, Error::new(
+            ErrorType::Overflow,
+            "(10) ^ (999) overflowed f64".to_string(),
+            4,
+            15
+        ));
     }
 }

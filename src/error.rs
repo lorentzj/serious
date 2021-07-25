@@ -6,7 +6,7 @@ pub enum ErrorType {
     Overflow
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Error {
     pub error_type: ErrorType,
     pub message: String,
