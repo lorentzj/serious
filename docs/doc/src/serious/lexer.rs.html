@@ -255,6 +255,10 @@
 <span id="252">252</span>
 <span id="253">253</span>
 <span id="254">254</span>
+<span id="255">255</span>
+<span id="256">256</span>
+<span id="257">257</span>
+<span id="258">258</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std::iter::FromIterator</span>;
 <span class="kw">use</span> <span class="kw">super</span><span class="ident">::error</span>::{<span class="ident">Error</span>, <span class="ident">ErrorType</span>};
@@ -420,19 +424,23 @@
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">invalid_float_extra_decimal</span>() {
         <span class="kw">let</span> <span class="ident">err</span> <span class="op">=</span> <span class="ident">lex</span>(<span class="string">&quot;0.2.3&quot;</span>).<span class="ident">unwrap_err</span>();
-        <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">error_type</span>, <span class="ident">ErrorType::BadParse</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">message</span>, <span class="string">&quot;invalid float literal&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">start</span>, <span class="number">0</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">end</span>, <span class="number">5</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">err</span>, <span class="ident">Error::new</span>(
+            <span class="ident">ErrorType::BadParse</span>,
+            <span class="string">&quot;invalid float literal&quot;</span>.<span class="ident">to_string</span>(),
+            <span class="number">0</span>,
+            <span class="number">5</span>
+        ));
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">invalid_float_only_decimal</span>() {
         <span class="kw">let</span> <span class="ident">err</span> <span class="op">=</span> <span class="ident">lex</span>(<span class="string">&quot;abc.&quot;</span>).<span class="ident">unwrap_err</span>();
-        <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">error_type</span>, <span class="ident">ErrorType::BadParse</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">message</span>, <span class="string">&quot;invalid float literal&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">start</span>, <span class="number">3</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">end</span>, <span class="number">4</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">err</span>, <span class="ident">Error::new</span>(
+            <span class="ident">ErrorType::BadParse</span>,
+            <span class="string">&quot;invalid float literal&quot;</span>.<span class="ident">to_string</span>(),
+            <span class="number">3</span>,
+            <span class="number">4</span>
+        ));
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>

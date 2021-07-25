@@ -25,8 +25,8 @@
 //! let context = create_context!{'x' => x, 'y' => y};
 //!
 //! // evaluate an expression, given the context
-//! let result = interpret("3(-2x + 1)^2(x - 1)", &context).unwrap();
-//! assert_eq!(result, 3.*(-2.*x + 1.).powf(2.)*(x - 1.));
+//! let result = interpret("y^2(-2x^3 + 1)/5.2", &context).unwrap();
+//! assert_eq!(result, y.powf(2.)*(-2.*x.powf(3.) + 1.)/5.2);
 //! ```
 
 /// Defines the type for expressions that fail to evaluate.

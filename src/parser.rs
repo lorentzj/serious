@@ -184,7 +184,7 @@ fn parse_tokens(tokens: &[Token], start: usize, expect_close_paren: bool) -> Res
         let at_end = if i == tokens.len() {
             true
         } else if expect_close_paren {
-            i == tokens.len() - 1 || tokens[i + 1].token_type != TokenType::CloseParen
+            tokens[i].token_type == TokenType::CloseParen
         } else {
             false
         };

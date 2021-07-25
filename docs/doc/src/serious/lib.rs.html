@@ -80,8 +80,8 @@
 <span class="doccomment">//! let context = create_context!{&#39;x&#39; =&gt; x, &#39;y&#39; =&gt; y};</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! // evaluate an expression, given the context</span>
-<span class="doccomment">//! let result = interpret(&quot;3(-2x + 1)^2(x - 1)&quot;, &amp;context).unwrap();</span>
-<span class="doccomment">//! assert_eq!(result, 3.*(-2.*x + 1.).powf(2.)*(x - 1.));</span>
+<span class="doccomment">//! let result = interpret(&quot;y^2(-2x^3 + 1)/5.2&quot;, &amp;context).unwrap();</span>
+<span class="doccomment">//! assert_eq!(result, y.powf(2.)*(-2.*x.powf(3.) + 1.)/5.2);</span>
 <span class="doccomment">//! ```</span>
 
 <span class="doccomment">/// Defines the type for expressions that fail to evaluate.</span>
