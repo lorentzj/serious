@@ -49,45 +49,7 @@ fn precedence(operation: &Operation) -> i32 {
     }
 }
 
-fn match_paren(tokens: &[Token], start: usize) -> Result<usize, Error> {
-    let mut i = start;
-    let mut level = 1;
-    while i < tokens.len() {
-        match tokens[i].token_type {
-            TokenType::OpenParen => {
-                level += 1;
-            }
-            TokenType::CloseParen => {
-                level -= 1;
-                match level {
-                    0 => {
-                        return Ok(i);
-                    }
-                    level if level < 0 => {
-                        return Err(Error::new(
-                            ErrorType::BadParse,
-                            "expected expression".to_string(),
-                            tokens[i].start,
-                            tokens[i].end
-                        ))
-                    }
-                    _ => ()
-                }
-            }
-            _ => ()
-        }
-        i += 1;
-    }
-
-    Err(Error::new(
-        ErrorType::BadParse,
-        "failed to match paren".to_string(),
-        tokens[start - 1].start,
-        tokens[start - 1].end
-    ))
-}
-
-fn parse_tokens(tokens: &[Token], start: usize, end: usize) -> Result<Expression, Error> {
+fn parse_tokens(tokens: &[Token], start: usize, expect_close_paren: bool) -> Result<(Expression, usize), Error> {
     let mut stack: Vec<(Operation, Expression)> = vec![];
     let (mut curr_lhs, mut i) = match tokens[start].token_type {
         TokenType::Constant(val) => {
@@ -101,8 +63,23 @@ fn parse_tokens(tokens: &[Token], start: usize, end: usize) -> Result<Expression
             (Expression::new_const(0., tokens[start].start, tokens[start].start), start)
         }
         TokenType::OpenParen => {
-            let end_paren = match_paren(tokens, start + 1)?;
-            let inner_expr = parse_tokens(tokens, start + 1, end_paren)?;
+            if start + 1 == tokens.len() {
+                return Err(Error::new(
+                    ErrorType::BadParse,
+                    "failed to match paren".to_string(),
+                    tokens[start].start,
+                    tokens[start].end
+                ));
+            }
+            let (inner_expr, end_paren) = parse_tokens(tokens, start + 1, true)?;
+            if end_paren == tokens.len() {
+                return Err(Error::new(
+                    ErrorType::BadParse,
+                    "failed to match paren".to_string(),
+                    tokens[start].start,
+                    tokens[start].end
+                ));
+            }
             (inner_expr.with_bounds(tokens[start].start, tokens[end_paren].end), end_paren + 1)
         }
         _ => {
@@ -115,7 +92,7 @@ fn parse_tokens(tokens: &[Token], start: usize, end: usize) -> Result<Expression
         }
     };
 
-    while i < end {
+    while i < tokens.len() {
         let curr_op = match tokens[i].token_type {
             TokenType::Op(op) => {
                 i += 1;
@@ -129,14 +106,18 @@ fn parse_tokens(tokens: &[Token], start: usize, end: usize) -> Result<Expression
                     tokens[i].start,
                     tokens[i].end
                 ))    
-            }
-            _ => {
-                return Err(Error::new(
-                    ErrorType::BadParse,
-                    "expected operation".to_string(),
-                    tokens[i].start,
-                    tokens[i].end
-                ))    
+            },
+            TokenType::CloseParen => {
+                if expect_close_paren {
+                    break;
+                } else {
+                    return Err(Error::new(
+                        ErrorType::BadParse,
+                        "expected expression".to_string(),
+                        tokens[i].start,
+                        tokens[i].end
+                    ))    
+                }
             }
         };
 
@@ -175,10 +156,17 @@ fn parse_tokens(tokens: &[Token], start: usize, end: usize) -> Result<Expression
                 Expression::new_const(val, tokens[i - 1].start, tokens[i - 1].end)
             }
             TokenType::OpenParen => {
-                let end_paren = match_paren(tokens, i + 1)?;
                 let old_i = i;
+                let (inner_expr, end_paren) = parse_tokens(tokens, old_i + 1, true)?;
                 i = end_paren + 1;
-                let inner_expr = parse_tokens(tokens, old_i + 1, end_paren)?;
+                if end_paren == tokens.len() {
+                    return Err(Error::new(
+                        ErrorType::BadParse,
+                        "failed to match paren".to_string(),
+                        tokens[old_i].start,
+                        tokens[old_i].end
+                    ))
+                }
                 inner_expr.with_bounds(tokens[old_i].start, tokens[end_paren].end)  
             }
             TokenType::CloseParen => {
@@ -187,28 +175,31 @@ fn parse_tokens(tokens: &[Token], start: usize, end: usize) -> Result<Expression
                     "expected expression".to_string(),
                     tokens[i].start,
                     tokens[i].end
-                ))
+                ))    
             }
         };
 
         stack.push((curr_op, curr_rhs));
 
+        let at_end = if i == tokens.len() {
+            true
+        } else if expect_close_paren {
+            i == tokens.len() - 1 || tokens[i + 1].token_type != TokenType::CloseParen
+        } else {
+            false
+        };
+
         while let Some((curr_op, curr_rhs)) = stack.pop() {
             if let Some((prev_op, prev_rhs)) = stack.pop() {
                 let prev_precedence_wins = precedence(&prev_op) < precedence(&curr_op);
-                let not_at_end = i < end;
-                if prev_precedence_wins && not_at_end {
+                if prev_precedence_wins && !at_end {
                     stack.push((prev_op, prev_rhs));
                     stack.push((curr_op, curr_rhs));
                     break;
                 } else if let Some((prev_prev_op, prev_prev_rhs)) = stack.pop() {
                     if prev_precedence_wins {
                         stack.push((prev_prev_op, prev_prev_rhs));
-                        stack.push((prev_op, Expression::new_op(
-                            prev_rhs,
-                            curr_op,
-                            curr_rhs
-                        )));
+                        stack.push((prev_op, Expression::new_op(prev_rhs, curr_op, curr_rhs)));
                     } else {
                         stack.push((prev_prev_op, Expression::new_op(prev_prev_rhs, prev_op, prev_rhs)));
                         stack.push((curr_op, curr_rhs));
@@ -230,13 +221,13 @@ fn parse_tokens(tokens: &[Token], start: usize, end: usize) -> Result<Expression
         curr_lhs = Expression::new_op(curr_lhs, last_op, last_rhs);
     }
 
-    Ok(curr_lhs)
+    Ok((curr_lhs, i))
 }
 
 /// Parses a Serious expression into an abstract syntax tree.
 pub fn parse(text: &str) -> Result<Expression, Error> {
     let tokens = lex(text)?;
-    parse_tokens(&tokens, 0, tokens.len())
+    Ok(parse_tokens(&tokens, 0, false)?.0)
 }
 
 #[cfg(test)]
@@ -246,6 +237,7 @@ mod tests {
     #[test]
     fn empty() {
         let err = parse("").unwrap_err();
+        assert_eq!(err.error_type, ErrorType::BadParse);
         assert_eq!(err.message, "expected token");
         assert_eq!(err.start, 0);
         assert_eq!(err.end, 1);
@@ -254,6 +246,7 @@ mod tests {
     #[test]
     fn err_from_lex() {
         let err = parse("2*0.2.3").unwrap_err();
+        assert_eq!(err.error_type, ErrorType::BadParse);
         assert_eq!(err.message, "invalid float literal");
         assert_eq!(err.start, 2);
         assert_eq!(err.end, 7);
@@ -426,6 +419,7 @@ mod tests {
     #[test]
     fn extra_open_paren() {
         let err = parse("(1*(2+3)").unwrap_err();
+        assert_eq!(err.error_type, ErrorType::BadParse);
         assert_eq!(err.message, "failed to match paren");
         assert_eq!(err.start, 0);
         assert_eq!(err.end, 1);
@@ -434,7 +428,8 @@ mod tests {
     #[test]
     fn extra_close_paren() {
         let err = parse("4*1+(2+3))").unwrap_err();
-        assert_eq!(err.message, "expected operation");
+        assert_eq!(err.error_type, ErrorType::BadParse);
+        assert_eq!(err.message, "expected expression");
         assert_eq!(err.start, 9);
         assert_eq!(err.end, 10);
     }
@@ -460,6 +455,7 @@ mod tests {
     #[test]
     fn attempt_const_implicit_mult() {
         let err = parse("x3").unwrap_err();
+        assert_eq!(err.error_type, ErrorType::BadParse);
         assert_eq!(err.message, "constant on RHS of implicit multiplication");
         assert_eq!(err.start, 1);
         assert_eq!(err.end, 2);
@@ -468,6 +464,7 @@ mod tests {
     #[test]
     fn empty_paren() {
         let err = parse("x()").unwrap_err();
+        assert_eq!(err.error_type, ErrorType::BadParse);
         assert_eq!(err.message, "expected expression");
         assert_eq!(err.start, 2);
         assert_eq!(err.end, 3);
@@ -476,6 +473,7 @@ mod tests {
     #[test]
     fn just_paren() {
         let err = parse("(").unwrap_err();
+        assert_eq!(err.error_type, ErrorType::BadParse);
         assert_eq!(err.message, "failed to match paren");
         assert_eq!(err.start, 0);
         assert_eq!(err.end, 1);
@@ -628,6 +626,7 @@ mod tests {
     #[test]
     fn unary_minus_error() {
         let err = parse("3*-2x").unwrap_err();
+        assert_eq!(err.error_type, ErrorType::BadParse);
         assert_eq!(err.message, "expected expression; wrap in parens for unary minus");
         assert_eq!(err.start, 2);
         assert_eq!(err.end, 3);

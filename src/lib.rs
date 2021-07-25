@@ -33,7 +33,7 @@
 pub mod error;
 
 /// Converts input text into tokens for parsing.
-pub mod lexer;
+mod lexer;
 
 /// Converts tokens into an abstract syntax tree.
 pub mod parser;

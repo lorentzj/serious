@@ -90,6 +90,7 @@ pub fn interpret_tree(tree: Expression, context: &Context) -> Result<f64, Error>
                 Ok(result)
             }
         }
+
         ExpressionData::Identifier(name) => {
             match context.get(&name) {
                 Some(val) => Ok(*val),
