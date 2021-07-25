@@ -688,28 +688,6 @@
 <span id="685">685</span>
 <span id="686">686</span>
 <span id="687">687</span>
-<span id="688">688</span>
-<span id="689">689</span>
-<span id="690">690</span>
-<span id="691">691</span>
-<span id="692">692</span>
-<span id="693">693</span>
-<span id="694">694</span>
-<span id="695">695</span>
-<span id="696">696</span>
-<span id="697">697</span>
-<span id="698">698</span>
-<span id="699">699</span>
-<span id="700">700</span>
-<span id="701">701</span>
-<span id="702">702</span>
-<span id="703">703</span>
-<span id="704">704</span>
-<span id="705">705</span>
-<span id="706">706</span>
-<span id="707">707</span>
-<span id="708">708</span>
-<span id="709">709</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">super</span><span class="ident">::error</span>::{<span class="ident">Error</span>, <span class="ident">ErrorType</span>};
 <span class="kw">pub</span> <span class="kw">use</span> <span class="kw">super</span><span class="ident">::lexer::Operation</span>;
@@ -1112,7 +1090,7 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">nested_parens</span>() {
-        <span class="kw">let</span> <span class="ident">tree</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;(x+y)(2^(20z))&quot;</span>).<span class="ident">unwrap</span>();
+        <span class="kw">let</span> <span class="ident">tree</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;(x+y)(2^(20z))^2&quot;</span>).<span class="ident">unwrap</span>();
         <span class="macro">assert_eq!</span>(<span class="ident">tree</span>, <span class="ident">Expression::new_op</span>(
             <span class="ident">Expression::new_op</span>(
                 <span class="ident">Expression::new_id</span>(<span class="string">&#39;x&#39;</span>, <span class="number">1</span>, <span class="number">2</span>),
@@ -1121,14 +1099,18 @@
             ).<span class="ident">with_bounds</span>(<span class="number">0</span>, <span class="number">5</span>),
             <span class="ident">Operation::Multiply</span>,
             <span class="ident">Expression::new_op</span>(
-                <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">6</span>, <span class="number">7</span>),
-                <span class="ident">Operation::Exponentiate</span>,
                 <span class="ident">Expression::new_op</span>(
-                    <span class="ident">Expression::new_const</span>(<span class="number">20.</span>, <span class="number">9</span>, <span class="number">11</span>),
-                    <span class="ident">Operation::Multiply</span>,
-                    <span class="ident">Expression::new_id</span>(<span class="string">&#39;z&#39;</span>, <span class="number">11</span>, <span class="number">12</span>)
-                ).<span class="ident">with_bounds</span>(<span class="number">8</span>, <span class="number">13</span>)
-            ).<span class="ident">with_bounds</span>(<span class="number">5</span>, <span class="number">14</span>)
+                    <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">6</span>, <span class="number">7</span>),
+                    <span class="ident">Operation::Exponentiate</span>,
+                    <span class="ident">Expression::new_op</span>(
+                        <span class="ident">Expression::new_const</span>(<span class="number">20.</span>, <span class="number">9</span>, <span class="number">11</span>),
+                        <span class="ident">Operation::Multiply</span>,
+                        <span class="ident">Expression::new_id</span>(<span class="string">&#39;z&#39;</span>, <span class="number">11</span>, <span class="number">12</span>)
+                    ).<span class="ident">with_bounds</span>(<span class="number">8</span>, <span class="number">13</span>)
+                ).<span class="ident">with_bounds</span>(<span class="number">5</span>, <span class="number">14</span>),
+                <span class="ident">Operation::Exponentiate</span>,
+                <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">15</span>, <span class="number">16</span>)
+            )
         ));
     }
 
@@ -1216,209 +1198,183 @@
         ));
     }
 
-    <span class="comment">// #[test]</span>
-    <span class="comment">// fn complex_implicit_mult_parens() {</span>
-    <span class="comment">//     let tree = parse(&quot;4z(9x^2 + 3)&quot;).unwrap();</span>
-    <span class="comment">//     assert_eq!(tree, Expression::Op(</span>
-    <span class="comment">//         Box::new(Expression::Op(</span>
-    <span class="comment">//             Box::new(Expression::Constant(4.)),</span>
-    <span class="comment">//             Operation::Multiply,</span>
-    <span class="comment">//             Box::new(Expression::Identifier(&#39;z&#39;)),</span>
-    <span class="comment">//         )),</span>
-    <span class="comment">//         Operation::Multiply,</span>
-    <span class="comment">//         Box::new(Expression::Op(</span>
-    <span class="comment">//             Box::new(Expression::Op(</span>
-    <span class="comment">//                 Box::new(Expression::Constant(9.)),</span>
-    <span class="comment">//                 Operation::Multiply,</span>
-    <span class="comment">//                 Box::new(Expression::Op(</span>
-    <span class="comment">//                     Box::new(Expression::Identifier(&#39;x&#39;)),</span>
-    <span class="comment">//                     Operation::Exponentiate,</span>
-    <span class="comment">//                     Box::new(Expression::Constant(2.))</span>
-    <span class="comment">//                 )),</span>
-    <span class="comment">//             )),</span>
-    <span class="comment">//             Operation::Add,</span>
-    <span class="comment">//             Box::new(Expression::Constant(3.))</span>
-    <span class="comment">//         ))</span>
-    <span class="comment">//     ));</span>
-    <span class="comment">// }</span>
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">complex_implicit_mult_parens</span>() {
+        <span class="kw">let</span> <span class="ident">tree</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;4z(9x^2 + 30)&quot;</span>).<span class="ident">unwrap</span>();
+        <span class="macro">assert_eq!</span>(<span class="ident">tree</span>, <span class="ident">Expression::new_op</span>(
+            <span class="ident">Expression::new_op</span>(
+                <span class="ident">Expression::new_const</span>(<span class="number">4.</span>, <span class="number">0</span>, <span class="number">1</span>),
+                <span class="ident">Operation::Multiply</span>,
+                <span class="ident">Expression::new_id</span>(<span class="string">&#39;z&#39;</span>, <span class="number">1</span>, <span class="number">2</span>)
+            ),
+            <span class="ident">Operation::Multiply</span>,
+            <span class="ident">Expression::new_op</span>(
+                <span class="ident">Expression::new_op</span>(
+                    <span class="ident">Expression::new_const</span>(<span class="number">9.</span>, <span class="number">3</span>, <span class="number">4</span>),
+                    <span class="ident">Operation::Multiply</span>,
+                    <span class="ident">Expression::new_op</span>(
+                        <span class="ident">Expression::new_id</span>(<span class="string">&#39;x&#39;</span>, <span class="number">4</span>, <span class="number">5</span>),
+                        <span class="ident">Operation::Exponentiate</span>,
+                        <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">6</span>, <span class="number">7</span>)
+                    )
+                ),
+                <span class="ident">Operation::Add</span>,
+                <span class="ident">Expression::new_const</span>(<span class="number">30.</span>, <span class="number">10</span>, <span class="number">12</span>),
+            ).<span class="ident">with_bounds</span>(<span class="number">2</span>, <span class="number">13</span>),
+        ));
+    }
 
-    <span class="comment">// #[test]</span>
-    <span class="comment">// fn factored_quadratic() {</span>
-    <span class="comment">//     let tree = parse(&quot;(2a+5)(a-4)&quot;).unwrap();</span>
-    <span class="comment">//     assert_eq!(tree, Expression::Op(</span>
-    <span class="comment">//         Box::new(Expression::Op(</span>
-    <span class="comment">//             Box::new(Expression::Op(</span>
-    <span class="comment">//                 Box::new(Expression::Constant(2.)),</span>
-    <span class="comment">//                 Operation::Multiply,</span>
-    <span class="comment">//                 Box::new(Expression::Identifier(&#39;a&#39;)),</span>
-    <span class="comment">//             )),</span>
-    <span class="comment">//             Operation::Add,</span>
-    <span class="comment">//             Box::new(Expression::Constant(5.))</span>
-    <span class="comment">//         )),</span>
-    <span class="comment">//         Operation::Multiply,</span>
-    <span class="comment">//         Box::new(Expression::Op(</span>
-    <span class="comment">//             Box::new(Expression::Identifier(&#39;a&#39;)),</span>
-    <span class="comment">//             Operation::Subtract,</span>
-    <span class="comment">//             Box::new(Expression::Constant(4.))</span>
-    <span class="comment">//         ))</span>
-    <span class="comment">//     ));</span>
-    <span class="comment">// }</span>
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">factored_quadratic</span>() {
+        <span class="kw">let</span> <span class="ident">tree</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;(2a+5)(a-4)&quot;</span>).<span class="ident">unwrap</span>();
+        <span class="macro">assert_eq!</span>(<span class="ident">tree</span>, <span class="ident">Expression::new_op</span>(
+            <span class="ident">Expression::new_op</span>(
+                <span class="ident">Expression::new_op</span>(
+                    <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">1</span>, <span class="number">2</span>),
+                    <span class="ident">Operation::Multiply</span>,
+                    <span class="ident">Expression::new_id</span>(<span class="string">&#39;a&#39;</span>, <span class="number">2</span>, <span class="number">3</span>)
+                ),
+                <span class="ident">Operation::Add</span>,
+                <span class="ident">Expression::new_const</span>(<span class="number">5.</span>, <span class="number">4</span>, <span class="number">5</span>)
+            ).<span class="ident">with_bounds</span>(<span class="number">0</span>, <span class="number">6</span>),
+            <span class="ident">Operation::Multiply</span>,
+            <span class="ident">Expression::new_op</span>(
+                <span class="ident">Expression::new_id</span>(<span class="string">&#39;a&#39;</span>, <span class="number">7</span>, <span class="number">8</span>),
+                <span class="ident">Operation::Subtract</span>,
+                <span class="ident">Expression::new_const</span>(<span class="number">4.</span>, <span class="number">9</span>, <span class="number">10</span>),
+            ).<span class="ident">with_bounds</span>(<span class="number">6</span>, <span class="number">11</span>)
+        ));
+    }
 
-    <span class="comment">// #[test]</span>
-    <span class="comment">// fn factored_quartic() {</span>
-    <span class="comment">//     let tree = parse(&quot;(a + 2)(a - 4)(a^2 + 8)&quot;).unwrap();</span>
-    <span class="comment">//     assert_eq!(tree, Expression::Op(</span>
-    <span class="comment">//         Box::new(Expression::Op(</span>
-    <span class="comment">//             Box::new(Expression::Op(</span>
-    <span class="comment">//                 Box::new(Expression::Identifier(&#39;a&#39;)),</span>
-    <span class="comment">//                 Operation::Add,</span>
-    <span class="comment">//                 Box::new(Expression::Constant(2.))</span>
-    <span class="comment">//             )),</span>
-    <span class="comment">//             Operation::Multiply,</span>
-    <span class="comment">//             Box::new(Expression::Op(</span>
-    <span class="comment">//                 Box::new(Expression::Identifier(&#39;a&#39;)),</span>
-    <span class="comment">//                 Operation::Subtract,</span>
-    <span class="comment">//                 Box::new(Expression::Constant(4.))</span>
-    <span class="comment">//             ))</span>
-    <span class="comment">//         )),</span>
-    <span class="comment">//         Operation::Multiply,</span>
-    <span class="comment">//         Box::new(Expression::Op(</span>
-    <span class="comment">//             Box::new(Expression::Op(</span>
-    <span class="comment">//                 Box::new(Expression::Identifier(&#39;a&#39;)),</span>
-    <span class="comment">//                 Operation::Exponentiate,</span>
-    <span class="comment">//                 Box::new(Expression::Constant(2.)),</span>
-    <span class="comment">//             )),</span>
-    <span class="comment">//             Operation::Add,</span>
-    <span class="comment">//             Box::new(Expression::Constant(8.))</span>
-    <span class="comment">//         ))</span>
-    <span class="comment">//     ));</span>
-    <span class="comment">// }</span>
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">factored_quartic</span>() {
+        <span class="kw">let</span> <span class="ident">tree</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;(a + 2)(a - 4)(a^20 + 8) + 4&quot;</span>).<span class="ident">unwrap</span>();
+        <span class="macro">assert_eq!</span>(<span class="ident">tree</span>, <span class="ident">Expression::new_op</span>(
+            <span class="ident">Expression::new_op</span>(
+                <span class="ident">Expression::new_op</span>(
+                    <span class="ident">Expression::new_op</span>(
+                        <span class="ident">Expression::new_id</span>(<span class="string">&#39;a&#39;</span>, <span class="number">1</span>, <span class="number">2</span>),
+                        <span class="ident">Operation::Add</span>,
+                        <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">5</span>, <span class="number">6</span>)
+                    ).<span class="ident">with_bounds</span>(<span class="number">0</span>, <span class="number">7</span>),
+                    <span class="ident">Operation::Multiply</span>,
+                    <span class="ident">Expression::new_op</span>(
+                        <span class="ident">Expression::new_id</span>(<span class="string">&#39;a&#39;</span>, <span class="number">8</span>, <span class="number">9</span>),
+                        <span class="ident">Operation::Subtract</span>,
+                        <span class="ident">Expression::new_const</span>(<span class="number">4.</span>, <span class="number">12</span>, <span class="number">13</span>),
+                    ).<span class="ident">with_bounds</span>(<span class="number">7</span>, <span class="number">14</span>)                
+                ),
+                <span class="ident">Operation::Multiply</span>,
+                <span class="ident">Expression::new_op</span>(
+                    <span class="ident">Expression::new_op</span>(
+                        <span class="ident">Expression::new_id</span>(<span class="string">&#39;a&#39;</span>, <span class="number">15</span>, <span class="number">16</span>),
+                        <span class="ident">Operation::Exponentiate</span>,
+                        <span class="ident">Expression::new_const</span>(<span class="number">20.</span>, <span class="number">17</span>, <span class="number">19</span>)
+                    ),
+                    <span class="ident">Operation::Add</span>,
+                    <span class="ident">Expression::new_const</span>(<span class="number">8.</span>, <span class="number">22</span>, <span class="number">23</span>)
+                ).<span class="ident">with_bounds</span>(<span class="number">14</span>, <span class="number">24</span>)
+            ),
+            <span class="ident">Operation::Add</span>,
+            <span class="ident">Expression::new_const</span>(<span class="number">4.</span>, <span class="number">27</span>, <span class="number">28</span>)
+        ));
+    }
 
-    <span class="comment">// #[test]</span>
-    <span class="comment">// fn unary_minus() {</span>
-    <span class="comment">//     let tree = parse(&quot;-2x&quot;).unwrap();</span>
-    <span class="comment">//     assert_eq!(tree, Expression::Op(</span>
-    <span class="comment">//         Box::new(Expression::Constant(0.)),</span>
-    <span class="comment">//         Operation::Subtract,</span>
-    <span class="comment">//         Box::new(Expression::Op(</span>
-    <span class="comment">//             Box::new(Expression::Constant(2.)),</span>
-    <span class="comment">//             Operation::Multiply,</span>
-    <span class="comment">//             Box::new(Expression::Identifier(&#39;x&#39;))</span>
-    <span class="comment">//         ))</span>
-    <span class="comment">//     ));</span>
-    <span class="comment">// }</span>
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">unary_minus</span>() {
+        <span class="kw">let</span> <span class="ident">tree</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;-2x&quot;</span>).<span class="ident">unwrap</span>();
+        <span class="macro">assert_eq!</span>(<span class="ident">tree</span>, <span class="ident">Expression::new_op</span>(
+            <span class="ident">Expression::new_const</span>(<span class="number">0.</span>, <span class="number">0</span>, <span class="number">0</span>),
+            <span class="ident">Operation::Subtract</span>,
+            <span class="ident">Expression::new_op</span>(
+                <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">1</span>, <span class="number">2</span>),
+                <span class="ident">Operation::Multiply</span>,
+                <span class="ident">Expression::new_id</span>(<span class="string">&#39;x&#39;</span>, <span class="number">2</span>, <span class="number">3</span>)
+            )
+        ));
+    }
 
-    <span class="comment">// #[test]</span>
-    <span class="comment">// fn order_of_ops_unary_minus() {</span>
-    <span class="comment">//     let tree = parse(&quot;-2x^2 - 3&quot;).unwrap();</span>
-    <span class="comment">//     assert_eq!(tree, Expression::Op(</span>
-    <span class="comment">//         Box::new(Expression::Op(</span>
-    <span class="comment">//             Box::new(Expression::Constant(0.)),</span>
-    <span class="comment">//             Operation::Subtract,</span>
-    <span class="comment">//             Box::new(Expression::Op(</span>
-    <span class="comment">//                 Box::new(Expression::Constant(2.)),</span>
-    <span class="comment">//                 Operation::Multiply,</span>
-    <span class="comment">//                 Box::new(Expression::Op(</span>
-    <span class="comment">//                     Box::new(Expression::Identifier(&#39;x&#39;)),</span>
-    <span class="comment">//                     Operation::Exponentiate,</span>
-    <span class="comment">//                     Box::new(Expression::Constant(2.)),</span>
-    <span class="comment">//                 ))</span>
-    <span class="comment">//             ))</span>
-    <span class="comment">//         )),</span>
-    <span class="comment">//         Operation::Subtract,</span>
-    <span class="comment">//         Box::new(Expression::Constant(3.))</span>
-    <span class="comment">//     ));</span>
-    <span class="comment">// }</span>
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">order_of_ops_unary_minus</span>() {
+        <span class="kw">let</span> <span class="ident">tree</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;-2x^2 - 3&quot;</span>).<span class="ident">unwrap</span>();
+        <span class="macro">assert_eq!</span>(<span class="ident">tree</span>, <span class="ident">Expression::new_op</span>(
+            <span class="ident">Expression::new_op</span>(
+                <span class="ident">Expression::new_const</span>(<span class="number">0.</span>, <span class="number">0</span>, <span class="number">0</span>),
+                <span class="ident">Operation::Subtract</span>,
+                <span class="ident">Expression::new_op</span>(
+                    <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">1</span>, <span class="number">2</span>),
+                    <span class="ident">Operation::Multiply</span>,
+                    <span class="ident">Expression::new_op</span>(
+                        <span class="ident">Expression::new_id</span>(<span class="string">&#39;x&#39;</span>, <span class="number">2</span>, <span class="number">3</span>),
+                        <span class="ident">Operation::Exponentiate</span>,
+                        <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">4</span>, <span class="number">5</span>),
+                    )
+                )
+            ),
+            <span class="ident">Operation::Subtract</span>,
+            <span class="ident">Expression::new_const</span>(<span class="number">3.</span>, <span class="number">8</span>, <span class="number">9</span>)
+        ));
+    }
 
-    <span class="comment">// #[test]</span>
-    <span class="comment">// fn unary_minus_error() {</span>
-    <span class="comment">//     let err = parse(&quot;3*-2x&quot;).unwrap_err();</span>
-    <span class="comment">//     assert_eq!(err.message, &quot;expected expression; wrap in parens for unary minus&quot;);</span>
-    <span class="comment">//     assert_eq!(err.start, 2);</span>
-    <span class="comment">//     assert_eq!(err.end, 3);</span>
-    <span class="comment">// }</span>
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">unary_minus_error</span>() {
+        <span class="kw">let</span> <span class="ident">err</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;3*-2x&quot;</span>).<span class="ident">unwrap_err</span>();
+        <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">message</span>, <span class="string">&quot;expected expression; wrap in parens for unary minus&quot;</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">start</span>, <span class="number">2</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">end</span>, <span class="number">3</span>);
+    }
 
-    <span class="comment">// #[test]</span>
-    <span class="comment">// fn unary_minus_nested() {</span>
-    <span class="comment">//     let tree = parse(&quot;3*(-2xy)&quot;).unwrap();</span>
-    <span class="comment">//     assert_eq!(tree, Expression::Op(</span>
-    <span class="comment">//         Box::new(Expression::Constant(3.)),</span>
-    <span class="comment">//         Operation::Multiply,</span>
-    <span class="comment">//         Box::new(Expression::Op(</span>
-    <span class="comment">//             Box::new(Expression::Constant(0.)),</span>
-    <span class="comment">//             Operation::Subtract,</span>
-    <span class="comment">//             Box::new(Expression::Op(</span>
-    <span class="comment">//                 Box::new(Expression::Constant(2.)),</span>
-    <span class="comment">//                 Operation::Multiply,</span>
-    <span class="comment">//                 Box::new(Expression::Identifier(&#39;x&#39;))</span>
-    <span class="comment">//             ))</span>
-    <span class="comment">//         ))</span>
-    <span class="comment">//     ));</span>
-    <span class="comment">// }</span>
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">unary_minus_nested</span>() {
+        <span class="kw">let</span> <span class="ident">tree</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;3*(-2xy)&quot;</span>).<span class="ident">unwrap</span>();
+        <span class="macro">assert_eq!</span>(<span class="ident">tree</span>, <span class="ident">Expression::new_op</span>(
+            <span class="ident">Expression::new_const</span>(<span class="number">3.</span>, <span class="number">0</span>, <span class="number">1</span>),
+            <span class="ident">Operation::Multiply</span>,
+            <span class="ident">Expression::new_op</span>(
+                <span class="ident">Expression::new_const</span>(<span class="number">0.</span>, <span class="number">3</span>, <span class="number">3</span>),
+                <span class="ident">Operation::Subtract</span>,
+                <span class="ident">Expression::new_op</span>(
+                    <span class="ident">Expression::new_op</span>(
+                        <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">4</span>, <span class="number">5</span>),
+                        <span class="ident">Operation::Multiply</span>,
+                        <span class="ident">Expression::new_id</span>(<span class="string">&#39;x&#39;</span>, <span class="number">5</span>, <span class="number">6</span>)
+                    ),
+                    <span class="ident">Operation::Multiply</span>,
+                    <span class="ident">Expression::new_id</span>(<span class="string">&#39;y&#39;</span>, <span class="number">6</span>, <span class="number">7</span>)
+                )
+            ).<span class="ident">with_bounds</span>(<span class="number">2</span>, <span class="number">8</span>)
+        ));
+    }
 
-    <span class="comment">// #[test]</span>
-    <span class="comment">// fn complex_polynomial_1() {</span>
-    <span class="comment">//     let tree = parse(&quot;1 + 3x^2y^3 + 6&quot;).unwrap();</span>
-    <span class="comment">//     assert_eq!(tree, Expression::Op(</span>
-    <span class="comment">//         Box::new(Expression::Op(</span>
-    <span class="comment">//             Box::new(Expression::Constant(1.)),</span>
-    <span class="comment">//             Operation::Add,</span>
-    <span class="comment">//             Box::new(Expression::Op(</span>
-    <span class="comment">//                 Box::new(Expression::Op(</span>
-    <span class="comment">//                     Box::new(Expression::Constant(3.)),</span>
-    <span class="comment">//                     Operation::Multiply,</span>
-    <span class="comment">//                     Box::new(Expression::Op(</span>
-    <span class="comment">//                         Box::new(Expression::Identifier(&#39;x&#39;)),</span>
-    <span class="comment">//                         Operation::Exponentiate,</span>
-    <span class="comment">//                         Box::new(Expression::Constant(2.))</span>
-    <span class="comment">//                     )),</span>
-    <span class="comment">//                 )),</span>
-    <span class="comment">//                 Operation::Multiply,</span>
-    <span class="comment">//                 Box::new(Expression::Op(</span>
-    <span class="comment">//                     Box::new(Expression::Identifier(&#39;y&#39;)),</span>
-    <span class="comment">//                     Operation::Exponentiate,</span>
-    <span class="comment">//                     Box::new(Expression::Constant(3.))</span>
-    <span class="comment">//                 )),</span>
-    <span class="comment">//             )),</span>
-    <span class="comment">//         )),</span>
-    <span class="comment">//         Operation::Add,</span>
-    <span class="comment">//         Box::new(Expression::Constant(6.))</span>
-    <span class="comment">//     ));</span>
-    <span class="comment">// }</span>
-
-    <span class="comment">// #[test]</span>
-    <span class="comment">// fn complex_polynomial_2() {</span>
-    <span class="comment">//     let tree = parse(&quot;3a^4b^3 + c^2d&quot;).unwrap();</span>
-    <span class="comment">//     assert_eq!(tree, Expression::Op(</span>
-    <span class="comment">//         Box::new(Expression::Op(</span>
-    <span class="comment">//             Box::new(Expression::Op(</span>
-    <span class="comment">//                 Box::new(Expression::Constant(3.)),</span>
-    <span class="comment">//                 Operation::Multiply,</span>
-    <span class="comment">//                 Box::new(Expression::Op(</span>
-    <span class="comment">//                     Box::new(Expression::Identifier(&#39;a&#39;)),</span>
-    <span class="comment">//                     Operation::Exponentiate,</span>
-    <span class="comment">//                     Box::new(Expression::Constant(4.))</span>
-    <span class="comment">//                 )),</span>
-    <span class="comment">//             )),</span>
-    <span class="comment">//             Operation::Multiply,</span>
-    <span class="comment">//             Box::new(Expression::Op(</span>
-    <span class="comment">//                 Box::new(Expression::Identifier(&#39;b&#39;)),</span>
-    <span class="comment">//                 Operation::Exponentiate,</span>
-    <span class="comment">//                 Box::new(Expression::Constant(3.))</span>
-    <span class="comment">//             )),</span>
-    <span class="comment">//         )),</span>
-    <span class="comment">//         Operation::Add,</span>
-    <span class="comment">//         Box::new(Expression::Op(</span>
-    <span class="comment">//             Box::new(Expression::Op(</span>
-    <span class="comment">//                 Box::new(Expression::Identifier(&#39;c&#39;)),</span>
-    <span class="comment">//                 Operation::Exponentiate,</span>
-    <span class="comment">//                 Box::new(Expression::Constant(2.))</span>
-    <span class="comment">//             )),</span>
-    <span class="comment">//             Operation::Multiply,</span>
-    <span class="comment">//             Box::new(Expression::Identifier(&#39;d&#39;))</span>
-    <span class="comment">//         )),</span>
-    <span class="comment">//     ));</span>
-    <span class="comment">// }</span>
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">complex_polynomial_1</span>() {
+        <span class="kw">let</span> <span class="ident">tree</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;1 + 3x^2y^3 + 6&quot;</span>).<span class="ident">unwrap</span>();
+        <span class="macro">assert_eq!</span>(<span class="ident">tree</span>, <span class="ident">Expression::new_op</span>(
+            <span class="ident">Expression::new_op</span>(
+                <span class="ident">Expression::new_const</span>(<span class="number">1.</span>, <span class="number">0</span>, <span class="number">1</span>),
+                <span class="ident">Operation::Add</span>,
+                <span class="ident">Expression::new_op</span>(
+                    <span class="ident">Expression::new_op</span>(
+                        <span class="ident">Expression::new_const</span>(<span class="number">3.</span>, <span class="number">4</span>, <span class="number">5</span>),
+                        <span class="ident">Operation::Multiply</span>,
+                        <span class="ident">Expression::new_op</span>(
+                            <span class="ident">Expression::new_id</span>(<span class="string">&#39;x&#39;</span>, <span class="number">5</span>, <span class="number">6</span>),
+                            <span class="ident">Operation::Exponentiate</span>,
+                            <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">7</span>, <span class="number">8</span>)
+                        ),
+                    ),
+                    <span class="ident">Operation::Multiply</span>,
+                    <span class="ident">Expression::new_op</span>(
+                        <span class="ident">Expression::new_id</span>(<span class="string">&#39;y&#39;</span>, <span class="number">8</span>, <span class="number">9</span>),
+                        <span class="ident">Operation::Exponentiate</span>,
+                        <span class="ident">Expression::new_const</span>(<span class="number">3.</span>, <span class="number">10</span>, <span class="number">11</span>)
+                    ),
+                ),
+            ),
+            <span class="ident">Operation::Add</span>,
+            <span class="ident">Expression::new_const</span>(<span class="number">6.</span>, <span class="number">14</span>, <span class="number">15</span>)
+        ));
+    }
 }</pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="serious" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div>
     <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script></body></html>

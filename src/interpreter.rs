@@ -64,11 +64,10 @@ pub fn interpret_tree(tree: Expression, context: &Context) -> Result<f64, Error>
                     }
                 }
                 Operation::Exponentiate => {
-                    let result = lhs.powf(rhs);
                     if lhs == 0. && rhs == 0. {
                         f64::NAN
                     } else {
-                        result
+                        lhs.powf(rhs)
                     }
                 }
             };

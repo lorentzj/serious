@@ -399,7 +399,7 @@ mod tests {
 
     #[test]
     fn nested_parens() {
-        let tree = parse("(x+y)(2^(20z))").unwrap();
+        let tree = parse("(x+y)(2^(20z))^2").unwrap();
         assert_eq!(tree, Expression::new_op(
             Expression::new_op(
                 Expression::new_id('x', 1, 2),
@@ -408,14 +408,18 @@ mod tests {
             ).with_bounds(0, 5),
             Operation::Multiply,
             Expression::new_op(
-                Expression::new_const(2., 6, 7),
-                Operation::Exponentiate,
                 Expression::new_op(
-                    Expression::new_const(20., 9, 11),
-                    Operation::Multiply,
-                    Expression::new_id('z', 11, 12)
-                ).with_bounds(8, 13)
-            ).with_bounds(5, 14)
+                    Expression::new_const(2., 6, 7),
+                    Operation::Exponentiate,
+                    Expression::new_op(
+                        Expression::new_const(20., 9, 11),
+                        Operation::Multiply,
+                        Expression::new_id('z', 11, 12)
+                    ).with_bounds(8, 13)
+                ).with_bounds(5, 14),
+                Operation::Exponentiate,
+                Expression::new_const(2., 15, 16)
+            )
         ));
     }
 
@@ -503,207 +507,181 @@ mod tests {
         ));
     }
 
-    // #[test]
-    // fn complex_implicit_mult_parens() {
-    //     let tree = parse("4z(9x^2 + 3)").unwrap();
-    //     assert_eq!(tree, Expression::Op(
-    //         Box::new(Expression::Op(
-    //             Box::new(Expression::Constant(4.)),
-    //             Operation::Multiply,
-    //             Box::new(Expression::Identifier('z')),
-    //         )),
-    //         Operation::Multiply,
-    //         Box::new(Expression::Op(
-    //             Box::new(Expression::Op(
-    //                 Box::new(Expression::Constant(9.)),
-    //                 Operation::Multiply,
-    //                 Box::new(Expression::Op(
-    //                     Box::new(Expression::Identifier('x')),
-    //                     Operation::Exponentiate,
-    //                     Box::new(Expression::Constant(2.))
-    //                 )),
-    //             )),
-    //             Operation::Add,
-    //             Box::new(Expression::Constant(3.))
-    //         ))
-    //     ));
-    // }
+    #[test]
+    fn complex_implicit_mult_parens() {
+        let tree = parse("4z(9x^2 + 30)").unwrap();
+        assert_eq!(tree, Expression::new_op(
+            Expression::new_op(
+                Expression::new_const(4., 0, 1),
+                Operation::Multiply,
+                Expression::new_id('z', 1, 2)
+            ),
+            Operation::Multiply,
+            Expression::new_op(
+                Expression::new_op(
+                    Expression::new_const(9., 3, 4),
+                    Operation::Multiply,
+                    Expression::new_op(
+                        Expression::new_id('x', 4, 5),
+                        Operation::Exponentiate,
+                        Expression::new_const(2., 6, 7)
+                    )
+                ),
+                Operation::Add,
+                Expression::new_const(30., 10, 12),
+            ).with_bounds(2, 13),
+        ));
+    }
 
-    // #[test]
-    // fn factored_quadratic() {
-    //     let tree = parse("(2a+5)(a-4)").unwrap();
-    //     assert_eq!(tree, Expression::Op(
-    //         Box::new(Expression::Op(
-    //             Box::new(Expression::Op(
-    //                 Box::new(Expression::Constant(2.)),
-    //                 Operation::Multiply,
-    //                 Box::new(Expression::Identifier('a')),
-    //             )),
-    //             Operation::Add,
-    //             Box::new(Expression::Constant(5.))
-    //         )),
-    //         Operation::Multiply,
-    //         Box::new(Expression::Op(
-    //             Box::new(Expression::Identifier('a')),
-    //             Operation::Subtract,
-    //             Box::new(Expression::Constant(4.))
-    //         ))
-    //     ));
-    // }
+    #[test]
+    fn factored_quadratic() {
+        let tree = parse("(2a+5)(a-4)").unwrap();
+        assert_eq!(tree, Expression::new_op(
+            Expression::new_op(
+                Expression::new_op(
+                    Expression::new_const(2., 1, 2),
+                    Operation::Multiply,
+                    Expression::new_id('a', 2, 3)
+                ),
+                Operation::Add,
+                Expression::new_const(5., 4, 5)
+            ).with_bounds(0, 6),
+            Operation::Multiply,
+            Expression::new_op(
+                Expression::new_id('a', 7, 8),
+                Operation::Subtract,
+                Expression::new_const(4., 9, 10),
+            ).with_bounds(6, 11)
+        ));
+    }
 
-    // #[test]
-    // fn factored_quartic() {
-    //     let tree = parse("(a + 2)(a - 4)(a^2 + 8)").unwrap();
-    //     assert_eq!(tree, Expression::Op(
-    //         Box::new(Expression::Op(
-    //             Box::new(Expression::Op(
-    //                 Box::new(Expression::Identifier('a')),
-    //                 Operation::Add,
-    //                 Box::new(Expression::Constant(2.))
-    //             )),
-    //             Operation::Multiply,
-    //             Box::new(Expression::Op(
-    //                 Box::new(Expression::Identifier('a')),
-    //                 Operation::Subtract,
-    //                 Box::new(Expression::Constant(4.))
-    //             ))
-    //         )),
-    //         Operation::Multiply,
-    //         Box::new(Expression::Op(
-    //             Box::new(Expression::Op(
-    //                 Box::new(Expression::Identifier('a')),
-    //                 Operation::Exponentiate,
-    //                 Box::new(Expression::Constant(2.)),
-    //             )),
-    //             Operation::Add,
-    //             Box::new(Expression::Constant(8.))
-    //         ))
-    //     ));
-    // }
+    #[test]
+    fn factored_quartic() {
+        let tree = parse("(a + 2)(a - 4)(a^20 + 8) + 4").unwrap();
+        assert_eq!(tree, Expression::new_op(
+            Expression::new_op(
+                Expression::new_op(
+                    Expression::new_op(
+                        Expression::new_id('a', 1, 2),
+                        Operation::Add,
+                        Expression::new_const(2., 5, 6)
+                    ).with_bounds(0, 7),
+                    Operation::Multiply,
+                    Expression::new_op(
+                        Expression::new_id('a', 8, 9),
+                        Operation::Subtract,
+                        Expression::new_const(4., 12, 13),
+                    ).with_bounds(7, 14)                
+                ),
+                Operation::Multiply,
+                Expression::new_op(
+                    Expression::new_op(
+                        Expression::new_id('a', 15, 16),
+                        Operation::Exponentiate,
+                        Expression::new_const(20., 17, 19)
+                    ),
+                    Operation::Add,
+                    Expression::new_const(8., 22, 23)
+                ).with_bounds(14, 24)
+            ),
+            Operation::Add,
+            Expression::new_const(4., 27, 28)
+        ));
+    }
 
-    // #[test]
-    // fn unary_minus() {
-    //     let tree = parse("-2x").unwrap();
-    //     assert_eq!(tree, Expression::Op(
-    //         Box::new(Expression::Constant(0.)),
-    //         Operation::Subtract,
-    //         Box::new(Expression::Op(
-    //             Box::new(Expression::Constant(2.)),
-    //             Operation::Multiply,
-    //             Box::new(Expression::Identifier('x'))
-    //         ))
-    //     ));
-    // }
+    #[test]
+    fn unary_minus() {
+        let tree = parse("-2x").unwrap();
+        assert_eq!(tree, Expression::new_op(
+            Expression::new_const(0., 0, 0),
+            Operation::Subtract,
+            Expression::new_op(
+                Expression::new_const(2., 1, 2),
+                Operation::Multiply,
+                Expression::new_id('x', 2, 3)
+            )
+        ));
+    }
 
-    // #[test]
-    // fn order_of_ops_unary_minus() {
-    //     let tree = parse("-2x^2 - 3").unwrap();
-    //     assert_eq!(tree, Expression::Op(
-    //         Box::new(Expression::Op(
-    //             Box::new(Expression::Constant(0.)),
-    //             Operation::Subtract,
-    //             Box::new(Expression::Op(
-    //                 Box::new(Expression::Constant(2.)),
-    //                 Operation::Multiply,
-    //                 Box::new(Expression::Op(
-    //                     Box::new(Expression::Identifier('x')),
-    //                     Operation::Exponentiate,
-    //                     Box::new(Expression::Constant(2.)),
-    //                 ))
-    //             ))
-    //         )),
-    //         Operation::Subtract,
-    //         Box::new(Expression::Constant(3.))
-    //     ));
-    // }
+    #[test]
+    fn order_of_ops_unary_minus() {
+        let tree = parse("-2x^2 - 3").unwrap();
+        assert_eq!(tree, Expression::new_op(
+            Expression::new_op(
+                Expression::new_const(0., 0, 0),
+                Operation::Subtract,
+                Expression::new_op(
+                    Expression::new_const(2., 1, 2),
+                    Operation::Multiply,
+                    Expression::new_op(
+                        Expression::new_id('x', 2, 3),
+                        Operation::Exponentiate,
+                        Expression::new_const(2., 4, 5),
+                    )
+                )
+            ),
+            Operation::Subtract,
+            Expression::new_const(3., 8, 9)
+        ));
+    }
 
-    // #[test]
-    // fn unary_minus_error() {
-    //     let err = parse("3*-2x").unwrap_err();
-    //     assert_eq!(err.message, "expected expression; wrap in parens for unary minus");
-    //     assert_eq!(err.start, 2);
-    //     assert_eq!(err.end, 3);
-    // }
+    #[test]
+    fn unary_minus_error() {
+        let err = parse("3*-2x").unwrap_err();
+        assert_eq!(err.message, "expected expression; wrap in parens for unary minus");
+        assert_eq!(err.start, 2);
+        assert_eq!(err.end, 3);
+    }
 
-    // #[test]
-    // fn unary_minus_nested() {
-    //     let tree = parse("3*(-2xy)").unwrap();
-    //     assert_eq!(tree, Expression::Op(
-    //         Box::new(Expression::Constant(3.)),
-    //         Operation::Multiply,
-    //         Box::new(Expression::Op(
-    //             Box::new(Expression::Constant(0.)),
-    //             Operation::Subtract,
-    //             Box::new(Expression::Op(
-    //                 Box::new(Expression::Constant(2.)),
-    //                 Operation::Multiply,
-    //                 Box::new(Expression::Identifier('x'))
-    //             ))
-    //         ))
-    //     ));
-    // }
+    #[test]
+    fn unary_minus_nested() {
+        let tree = parse("3*(-2xy)").unwrap();
+        assert_eq!(tree, Expression::new_op(
+            Expression::new_const(3., 0, 1),
+            Operation::Multiply,
+            Expression::new_op(
+                Expression::new_const(0., 3, 3),
+                Operation::Subtract,
+                Expression::new_op(
+                    Expression::new_op(
+                        Expression::new_const(2., 4, 5),
+                        Operation::Multiply,
+                        Expression::new_id('x', 5, 6)
+                    ),
+                    Operation::Multiply,
+                    Expression::new_id('y', 6, 7)
+                )
+            ).with_bounds(2, 8)
+        ));
+    }
 
-    // #[test]
-    // fn complex_polynomial_1() {
-    //     let tree = parse("1 + 3x^2y^3 + 6").unwrap();
-    //     assert_eq!(tree, Expression::Op(
-    //         Box::new(Expression::Op(
-    //             Box::new(Expression::Constant(1.)),
-    //             Operation::Add,
-    //             Box::new(Expression::Op(
-    //                 Box::new(Expression::Op(
-    //                     Box::new(Expression::Constant(3.)),
-    //                     Operation::Multiply,
-    //                     Box::new(Expression::Op(
-    //                         Box::new(Expression::Identifier('x')),
-    //                         Operation::Exponentiate,
-    //                         Box::new(Expression::Constant(2.))
-    //                     )),
-    //                 )),
-    //                 Operation::Multiply,
-    //                 Box::new(Expression::Op(
-    //                     Box::new(Expression::Identifier('y')),
-    //                     Operation::Exponentiate,
-    //                     Box::new(Expression::Constant(3.))
-    //                 )),
-    //             )),
-    //         )),
-    //         Operation::Add,
-    //         Box::new(Expression::Constant(6.))
-    //     ));
-    // }
-
-    // #[test]
-    // fn complex_polynomial_2() {
-    //     let tree = parse("3a^4b^3 + c^2d").unwrap();
-    //     assert_eq!(tree, Expression::Op(
-    //         Box::new(Expression::Op(
-    //             Box::new(Expression::Op(
-    //                 Box::new(Expression::Constant(3.)),
-    //                 Operation::Multiply,
-    //                 Box::new(Expression::Op(
-    //                     Box::new(Expression::Identifier('a')),
-    //                     Operation::Exponentiate,
-    //                     Box::new(Expression::Constant(4.))
-    //                 )),
-    //             )),
-    //             Operation::Multiply,
-    //             Box::new(Expression::Op(
-    //                 Box::new(Expression::Identifier('b')),
-    //                 Operation::Exponentiate,
-    //                 Box::new(Expression::Constant(3.))
-    //             )),
-    //         )),
-    //         Operation::Add,
-    //         Box::new(Expression::Op(
-    //             Box::new(Expression::Op(
-    //                 Box::new(Expression::Identifier('c')),
-    //                 Operation::Exponentiate,
-    //                 Box::new(Expression::Constant(2.))
-    //             )),
-    //             Operation::Multiply,
-    //             Box::new(Expression::Identifier('d'))
-    //         )),
-    //     ));
-    // }
+    #[test]
+    fn complex_polynomial_1() {
+        let tree = parse("1 + 3x^2y^3 + 6").unwrap();
+        assert_eq!(tree, Expression::new_op(
+            Expression::new_op(
+                Expression::new_const(1., 0, 1),
+                Operation::Add,
+                Expression::new_op(
+                    Expression::new_op(
+                        Expression::new_const(3., 4, 5),
+                        Operation::Multiply,
+                        Expression::new_op(
+                            Expression::new_id('x', 5, 6),
+                            Operation::Exponentiate,
+                            Expression::new_const(2., 7, 8)
+                        ),
+                    ),
+                    Operation::Multiply,
+                    Expression::new_op(
+                        Expression::new_id('y', 8, 9),
+                        Operation::Exponentiate,
+                        Expression::new_const(3., 10, 11)
+                    ),
+                ),
+            ),
+            Operation::Add,
+            Expression::new_const(6., 14, 15)
+        ));
+    }
 }
