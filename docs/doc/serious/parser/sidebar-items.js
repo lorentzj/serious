@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["ExpressionData",""]],"fn":[["parse",""]],"struct":[["Expression",""]]});
+initSidebarItems({"enum":[["ExpressionData",""]],"fn":[["parse","Parses a Serious expression into an abstract syntax tree."]],"struct":[["Expression",""]]});

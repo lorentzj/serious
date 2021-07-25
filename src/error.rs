@@ -2,7 +2,8 @@
 pub enum ErrorType {
     BadParse,
     UnboundIdentifier,
-    UndefinedOperation
+    UndefinedOperation,
+    Overflow
 }
 
 #[derive(Debug)]

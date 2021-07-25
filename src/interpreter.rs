@@ -1,14 +1,32 @@
 use super::parser::{parse, Expression, ExpressionData, Operation};
 use super::error::{Error, ErrorType};
 
+/// A hashmap from identifiers to values which can be applied to an expression using [serious::interpret](interpret).
 pub type Context = std::collections::HashMap<char, f64>;
 
+/// Creates a [serious::Context](Context) which can be applied to an expression using [serious::interpret](interpret).
+/// 
+/// Each `id` (char) will bound to its corresponding `val` (f64).
+///
+/// ```
+/// use serious::{interpreter::Context, create_context};
+///
+/// let mut test_context = Context::new();
+///
+/// assert_eq!(create_context!{}, test_context);
+///
+/// test_context.insert('a', 4.);
+/// assert_eq!(create_context!{'a' => 4.}, test_context);
+/// 
+/// test_context.insert('b', 5.);
+/// assert_eq!(create_context!{'a' => 4., 'b' => 5.}, test_context);
+/// ```
 #[macro_export]
 macro_rules! create_context {
-    ($($id:expr => $v:expr),* $(,)?) => {{
+    ($($id:expr => $val:expr),*$(,)?) => {{
         use std::iter::{Iterator, IntoIterator};
         use std::collections::HashMap;
-        let iter = IntoIterator::into_iter([$(($id, $v),)*]);
+        let iter = IntoIterator::into_iter([$(($id, $val),)*]);
         HashMap::<char, f64>::from(Iterator::collect(iter))
     }};
 }
@@ -23,6 +41,7 @@ fn op_representation(op: Operation) -> char {
     }
 }
 
+/// Evaluates a pre-parsed Serious expression.
 pub fn interpret_tree(tree: Expression, context: &Context) -> Result<f64, Error> {
     match tree.data {
         ExpressionData::Constant(val) => Ok(val),
@@ -56,8 +75,8 @@ pub fn interpret_tree(tree: Expression, context: &Context) -> Result<f64, Error>
 
             if result.is_infinite() {
                 Err(Error::new(
-                    ErrorType::UndefinedOperation,
-                    format!("({}) {} ({}) is infinity", lhs, op_representation(op), rhs),
+                    ErrorType::Overflow,
+                    format!("({}) {} ({}) overflowed f64", lhs, op_representation(op), rhs),
                     tree.start,
                     tree.end
                 ))
@@ -86,6 +105,7 @@ pub fn interpret_tree(tree: Expression, context: &Context) -> Result<f64, Error>
     }
 }
 
+/// Evaluates a Serious expression.
 pub fn interpret(text: &str, bound_vars: &Context) -> Result<f64, Error> {
     interpret_tree(parse(text)?, bound_vars)
 }
@@ -96,13 +116,13 @@ mod tests {
 
     #[test]
     fn literal() {
-        let val = interpret("10.3", &Context::new()).unwrap();
+        let val = interpret("10.3", &create_context!{}).unwrap();
         assert_eq!(val, 10.3);
     }
 
     #[test]
     fn err_from_parse() {
-        let err = interpret("(1*(2+3)", &Context::new()).unwrap_err();
+        let err = interpret("(1*(2+3)", &create_context!{}).unwrap_err();
         assert_eq!(err.message, "failed to match paren");
         assert_eq!(err.error_type, ErrorType::BadParse);
         assert_eq!(err.start, 0);
@@ -122,7 +142,7 @@ mod tests {
 
     #[test]
     fn div_zero_1() {
-        let err = interpret("10/0", &Context::new()).unwrap_err();
+        let err = interpret("10/0", &create_context!{}).unwrap_err();
         assert_eq!(err.error_type, ErrorType::UndefinedOperation);
         assert_eq!(err.message, "division by zero is undefined");
         assert_eq!(err.start, 0);
@@ -131,7 +151,7 @@ mod tests {
 
     #[test]
     fn div_zero_2() {
-        let err = interpret("2^(56 / (2 - 2)) * 3", &Context::new()).unwrap_err();
+        let err = interpret("2^(56 / (2 - 2)) * 3", &create_context!{}).unwrap_err();
         assert_eq!(err.error_type, ErrorType::UndefinedOperation);
         assert_eq!(err.message, "division by zero is undefined");
         assert_eq!(err.start, 2);
@@ -140,7 +160,7 @@ mod tests {
 
     #[test]
     fn simple_add() {
-        let val = interpret("1 + 2 + 3 + 4.8", &Context::new()).unwrap();
+        let val = interpret("1 + 2 + 3 + 4.8", &create_context!{}).unwrap();
         assert_eq!(val, 10.8);
     }
 
@@ -162,9 +182,18 @@ mod tests {
 
     #[test]
     fn bad_pow() {
-        let err = interpret("4 + (1 - 2)^0.5", &Context::new()).unwrap_err();
+        let err = interpret("4 + (1 - 2)^0.5", &create_context!{}).unwrap_err();
         assert_eq!(err.error_type, ErrorType::UndefinedOperation);
         assert_eq!(err.message, "(-1) ^ (0.5) is undefined");
+        assert_eq!(err.start, 4);
+        assert_eq!(err.end, 15);
+    }
+
+    #[test]
+    fn eval_to_infinity() {
+        let err = interpret("3 + (9 + 1)^999", &create_context!{}).unwrap_err();
+        assert_eq!(err.error_type, ErrorType::Overflow);
+        assert_eq!(err.message, "(10) ^ (999) overflowed f64");
         assert_eq!(err.start, 4);
         assert_eq!(err.end, 15);
     }

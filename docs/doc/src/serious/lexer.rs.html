@@ -247,6 +247,10 @@
 <span id="244">244</span>
 <span id="245">245</span>
 <span id="246">246</span>
+<span id="247">247</span>
+<span id="248">248</span>
+<span id="249">249</span>
+<span id="250">250</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std::iter::FromIterator</span>;
 <span class="kw">use</span> <span class="kw">super</span><span class="ident">::error</span>::{<span class="ident">Error</span>, <span class="ident">ErrorType</span>};
@@ -306,10 +310,10 @@
             <span class="kw">let</span> <span class="ident">parsed_number</span> <span class="op">=</span> <span class="ident">String::from_iter</span>(<span class="self">self</span>.<span class="ident">curr_number</span>).<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span>();
             <span class="kw">match</span> <span class="ident">parsed_number</span> {
                 <span class="prelude-val">Ok</span>(<span class="ident">n</span>)  <span class="op">=</span><span class="op">&gt;</span> {
-                    <span class="kw">if</span> <span class="ident">n</span> <span class="op">=</span><span class="op">=</span> <span class="ident">f64::INFINITY</span> {
+                    <span class="kw">if</span> <span class="ident">n</span>.<span class="ident">is_infinite</span>() {
                         <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::new</span>(
-                            <span class="ident">ErrorType::BadParse</span>,
-                            <span class="string">&quot;number too large to fit in f64&quot;</span>.<span class="ident">to_string</span>(),
+                            <span class="ident">ErrorType::Overflow</span>,
+                            <span class="string">&quot;number overflowed f64&quot;</span>.<span class="ident">to_string</span>(),
                             <span class="self">self</span>.<span class="ident">index</span> <span class="op">-</span> <span class="ident">n_len</span>,
                             <span class="self">self</span>.<span class="ident">index</span>
                         ))
@@ -387,6 +391,7 @@
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">empty</span>() {
         <span class="kw">let</span> <span class="ident">err</span> <span class="op">=</span> <span class="ident">lex</span>(<span class="string">&quot;&quot;</span>).<span class="ident">unwrap_err</span>();
+        <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">error_type</span>, <span class="ident">ErrorType::BadParse</span>);
         <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">message</span>, <span class="string">&quot;expected token&quot;</span>);
         <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">start</span>, <span class="number">0</span>);
         <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">end</span>, <span class="number">1</span>);
@@ -398,7 +403,8 @@
         <span class="ident">too_big</span>.<span class="ident">push_str</span>(<span class="string">&quot;0&quot;</span>);
 
         <span class="kw">let</span> <span class="ident">err</span> <span class="op">=</span> <span class="ident">lex</span>(<span class="ident">too_big</span>.<span class="ident">as_str</span>()).<span class="ident">unwrap_err</span>();
-        <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">message</span>, <span class="string">&quot;number too large to fit in f64&quot;</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">error_type</span>, <span class="ident">ErrorType::Overflow</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">message</span>, <span class="string">&quot;number overflowed f64&quot;</span>);
         <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">start</span>, <span class="number">0</span>);
         <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">end</span>, <span class="number">310</span>);
     }
@@ -406,6 +412,7 @@
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">invalid_float_extra_decimal</span>() {
         <span class="kw">let</span> <span class="ident">err</span> <span class="op">=</span> <span class="ident">lex</span>(<span class="string">&quot;0.2.3&quot;</span>).<span class="ident">unwrap_err</span>();
+        <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">error_type</span>, <span class="ident">ErrorType::BadParse</span>);
         <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">message</span>, <span class="string">&quot;invalid float literal&quot;</span>);
         <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">start</span>, <span class="number">0</span>);
         <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">end</span>, <span class="number">5</span>);
@@ -414,6 +421,7 @@
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">invalid_float_only_decimal</span>() {
         <span class="kw">let</span> <span class="ident">err</span> <span class="op">=</span> <span class="ident">lex</span>(<span class="string">&quot;abc.&quot;</span>).<span class="ident">unwrap_err</span>();
+        <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">error_type</span>, <span class="ident">ErrorType::BadParse</span>);
         <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">message</span>, <span class="string">&quot;invalid float literal&quot;</span>);
         <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">start</span>, <span class="number">3</span>);
         <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">end</span>, <span class="number">4</span>);

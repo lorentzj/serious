@@ -34,8 +34,8 @@ impl Expression {
         Expression { data, start, end }
     }
 
-    fn with_new_bounds(expr: Expression, start: usize, end: usize) -> Expression {
-        Expression { data: expr.data, start, end }
+    pub fn with_bounds(self, start: usize, end: usize) -> Expression {
+        Expression { data: self.data, start, end }
     }
 }
 
@@ -103,7 +103,7 @@ fn parse_tokens(tokens: &[Token], start: usize, end: usize) -> Result<Expression
         TokenType::OpenParen => {
             let end_paren = match_paren(tokens, start + 1)?;
             let inner_expr = parse_tokens(tokens, start + 1, end_paren)?;
-            (Expression::with_new_bounds(inner_expr, tokens[start].start, tokens[end_paren].end), end_paren + 1)
+            (inner_expr.with_bounds(tokens[start].start, tokens[end_paren].end), end_paren + 1)
         }
         _ => {
             return Err(Error::new(
@@ -179,7 +179,7 @@ fn parse_tokens(tokens: &[Token], start: usize, end: usize) -> Result<Expression
                 let old_i = i;
                 i = end_paren + 1;
                 let inner_expr = parse_tokens(tokens, old_i + 1, end_paren)?;
-                Expression::with_new_bounds(inner_expr, tokens[old_i].start, tokens[end_paren].end)  
+                inner_expr.with_bounds(tokens[old_i].start, tokens[end_paren].end)  
             }
             TokenType::CloseParen => {
                 return Err(Error::new(
@@ -233,6 +233,7 @@ fn parse_tokens(tokens: &[Token], start: usize, end: usize) -> Result<Expression
     Ok(curr_lhs)
 }
 
+/// Parses a Serious expression into an abstract syntax tree.
 pub fn parse(text: &str) -> Result<Expression, Error> {
     let tokens = lex(text)?;
     parse_tokens(&tokens, 0, tokens.len())
@@ -388,13 +389,11 @@ mod tests {
         assert_eq!(tree, Expression::new_op(
             Expression::new_const(2., 0, 1),
             Operation::Multiply,
-            Expression::with_new_bounds(
-                Expression::new_op(
-                    Expression::new_id('x', 4, 5),
-                    Operation::Add,
-                    Expression::new_const(0.4, 8, 11)
-                ), 2, 13
-            )
+            Expression::new_op(
+                Expression::new_id('x', 4, 5),
+                Operation::Add,
+                Expression::new_const(0.4, 8, 11)
+            ).with_bounds(2, 13)
         ));
     }
 
@@ -402,27 +401,21 @@ mod tests {
     fn nested_parens() {
         let tree = parse("(x+y)(2^(20z))").unwrap();
         assert_eq!(tree, Expression::new_op(
-            Expression::with_new_bounds(
-                Expression::new_op(
-                    Expression::new_id('x', 1, 2),
-                    Operation::Add,
-                    Expression::new_id('y', 3, 4)
-                ), 0, 5
-            ),
+            Expression::new_op(
+                Expression::new_id('x', 1, 2),
+                Operation::Add,
+                Expression::new_id('y', 3, 4)
+            ).with_bounds(0, 5),
             Operation::Multiply,
-            Expression::with_new_bounds(
+            Expression::new_op(
+                Expression::new_const(2., 6, 7),
+                Operation::Exponentiate,
                 Expression::new_op(
-                    Expression::new_const(2., 6, 7),
-                    Operation::Exponentiate,
-                    Expression::with_new_bounds(
-                        Expression::new_op(
-                            Expression::new_const(20., 9, 11),
-                            Operation::Multiply,
-                            Expression::new_id('z', 11, 12)
-                        ), 8, 13
-                    )
-                ), 5, 14
-            )
+                    Expression::new_const(20., 9, 11),
+                    Operation::Multiply,
+                    Expression::new_id('z', 11, 12)
+                ).with_bounds(8, 13)
+            ).with_bounds(5, 14)
         ));
     }
 

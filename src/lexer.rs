@@ -56,10 +56,10 @@ impl LexerState {
             let parsed_number = String::from_iter(self.curr_number).parse::<f64>();
             match parsed_number {
                 Ok(n)  => {
-                    if n == f64::INFINITY {
+                    if n.is_infinite() {
                         return Err(Error::new(
-                            ErrorType::BadParse,
-                            "number too large to fit in f64".to_string(),
+                            ErrorType::Overflow,
+                            "number overflowed f64".to_string(),
                             self.index - n_len,
                             self.index
                         ))
@@ -137,6 +137,7 @@ mod tests {
     #[test]
     fn empty() {
         let err = lex("").unwrap_err();
+        assert_eq!(err.error_type, ErrorType::BadParse);
         assert_eq!(err.message, "expected token");
         assert_eq!(err.start, 0);
         assert_eq!(err.end, 1);
@@ -148,7 +149,8 @@ mod tests {
         too_big.push_str("0");
 
         let err = lex(too_big.as_str()).unwrap_err();
-        assert_eq!(err.message, "number too large to fit in f64");
+        assert_eq!(err.error_type, ErrorType::Overflow);
+        assert_eq!(err.message, "number overflowed f64");
         assert_eq!(err.start, 0);
         assert_eq!(err.end, 310);
     }
@@ -156,6 +158,7 @@ mod tests {
     #[test]
     fn invalid_float_extra_decimal() {
         let err = lex("0.2.3").unwrap_err();
+        assert_eq!(err.error_type, ErrorType::BadParse);
         assert_eq!(err.message, "invalid float literal");
         assert_eq!(err.start, 0);
         assert_eq!(err.end, 5);
@@ -164,6 +167,7 @@ mod tests {
     #[test]
     fn invalid_float_only_decimal() {
         let err = lex("abc.").unwrap_err();
+        assert_eq!(err.error_type, ErrorType::BadParse);
         assert_eq!(err.message, "invalid float literal");
         assert_eq!(err.start, 3);
         assert_eq!(err.end, 4);
