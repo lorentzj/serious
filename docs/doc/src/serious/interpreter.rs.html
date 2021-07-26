@@ -214,15 +214,44 @@
 <span id="211">211</span>
 <span id="212">212</span>
 <span id="213">213</span>
+<span id="214">214</span>
+<span id="215">215</span>
+<span id="216">216</span>
+<span id="217">217</span>
+<span id="218">218</span>
+<span id="219">219</span>
+<span id="220">220</span>
+<span id="221">221</span>
+<span id="222">222</span>
+<span id="223">223</span>
+<span id="224">224</span>
+<span id="225">225</span>
+<span id="226">226</span>
+<span id="227">227</span>
+<span id="228">228</span>
+<span id="229">229</span>
+<span id="230">230</span>
+<span id="231">231</span>
+<span id="232">232</span>
+<span id="233">233</span>
+<span id="234">234</span>
+<span id="235">235</span>
+<span id="236">236</span>
+<span id="237">237</span>
+<span id="238">238</span>
+<span id="239">239</span>
+<span id="240">240</span>
+<span id="241">241</span>
+<span id="242">242</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="kw">use</span> <span class="kw">super</span><span class="ident">::parser</span>::{<span class="ident">parse</span>, <span class="ident">Expression</span>, <span class="ident">ExpressionData</span>, <span class="ident">Operation</span>};
 <span class="kw">use</span> <span class="kw">super</span><span class="ident">::error</span>::{<span class="ident">Error</span>, <span class="ident">ErrorType</span>};
+<span class="kw">use</span> <span class="kw">super</span><span class="ident">::parser</span>::{<span class="ident">parse</span>, <span class="ident">Expression</span>, <span class="ident">ExpressionData</span>, <span class="ident">Operation</span>};
 
 <span class="doccomment">/// A hashmap from identifiers to values which can be applied to an expression using [`interpret`](crate::interpreter::interpret)/[`interpret_tree`](crate::interpreter::interpret_tree).</span>
 <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">Context</span> <span class="op">=</span> <span class="ident">std::collections::HashMap</span><span class="op">&lt;</span><span class="ident">char</span>, <span class="ident">f64</span><span class="op">&gt;</span>;
 
 <span class="doccomment">/// Creates a [`Context`](crate::interpreter::Context) which can be applied to an expression using [`interpret`](crate::interpreter::interpret)/[`interpret_tree`](crate::interpreter::interpret_tree).</span>
-<span class="doccomment">/// </span>
+<span class="doccomment">///</span>
 <span class="doccomment">/// Each `id` will bound to its corresponding `val`.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// ```</span>
@@ -234,7 +263,7 @@
 <span class="doccomment">///</span>
 <span class="doccomment">/// test_context.insert(&#39;a&#39;, 4.);</span>
 <span class="doccomment">/// assert_eq!(create_context!{&#39;a&#39; =&gt; 4.}, test_context);</span>
-<span class="doccomment">/// </span>
+<span class="doccomment">///</span>
 <span class="doccomment">/// test_context.insert(&#39;b&#39;, 5.);</span>
 <span class="doccomment">/// assert_eq!(create_context!{&#39;a&#39; =&gt; 4., &#39;b&#39; =&gt; 5.}, test_context);</span>
 <span class="doccomment">/// ```</span>
@@ -254,7 +283,7 @@
         <span class="ident">Operation::Multiply</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&#39;*&#39;</span>,
         <span class="ident">Operation::Divide</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&#39;/&#39;</span>,
         <span class="ident">Operation::Add</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&#39;+&#39;</span>,
-        <span class="ident">Operation::Subtract</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&#39;-&#39;</span>
+        <span class="ident">Operation::Subtract</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&#39;-&#39;</span>,
     }
 }
 
@@ -263,7 +292,10 @@
     <span class="kw">match</span> <span class="ident">tree</span>.<span class="ident">data</span> {
         <span class="ident">ExpressionData::Constant</span>(<span class="ident">val</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">val</span>),
         <span class="ident">ExpressionData::Op</span>(<span class="ident">lhs</span>, <span class="ident">op</span>, <span class="ident">rhs</span>) <span class="op">=</span><span class="op">&gt;</span> {
-            <span class="kw">let</span> (<span class="ident">lhs</span>, <span class="ident">rhs</span>) <span class="op">=</span> (<span class="ident">interpret_tree</span>(<span class="kw-2">*</span><span class="ident">lhs</span>, <span class="ident">context</span>)<span class="question-mark">?</span>, <span class="ident">interpret_tree</span>(<span class="kw-2">*</span><span class="ident">rhs</span>, <span class="ident">context</span>)<span class="question-mark">?</span>);
+            <span class="kw">let</span> (<span class="ident">lhs</span>, <span class="ident">rhs</span>) <span class="op">=</span> (
+                <span class="ident">interpret_tree</span>(<span class="kw-2">*</span><span class="ident">lhs</span>, <span class="ident">context</span>)<span class="question-mark">?</span>,
+                <span class="ident">interpret_tree</span>(<span class="kw-2">*</span><span class="ident">rhs</span>, <span class="ident">context</span>)<span class="question-mark">?</span>,
+            );
             <span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">op</span> {
                 <span class="ident">Operation::Add</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">lhs</span> <span class="op">+</span> <span class="ident">rhs</span>,
                 <span class="ident">Operation::Subtract</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">lhs</span> <span class="op">-</span> <span class="ident">rhs</span>,
@@ -272,19 +304,19 @@
                     <span class="kw">if</span> <span class="ident">rhs</span> <span class="op">=</span><span class="op">=</span> <span class="number">0.</span> {
                         <span class="ident">f64::NAN</span>
                     } <span class="kw">else</span> {
-                        <span class="ident">lhs</span><span class="op">/</span><span class="ident">rhs</span>
+                        <span class="ident">lhs</span> <span class="op">/</span> <span class="ident">rhs</span>
                     }
                 }
-                <span class="ident">Operation::Exponentiate</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">lhs</span>.<span class="ident">powf</span>(<span class="ident">rhs</span>)
+                <span class="ident">Operation::Exponentiate</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">lhs</span>.<span class="ident">powf</span>(<span class="ident">rhs</span>),
             };
 
-            <span class="kw">let</span> <span class="ident">lhs_rep</span>  <span class="op">=</span> <span class="kw">if</span> <span class="ident">lhs</span> <span class="op">&lt;</span> <span class="number">0.</span> {
+            <span class="kw">let</span> <span class="ident">lhs_rep</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">lhs</span> <span class="op">&lt;</span> <span class="number">0.</span> {
                 <span class="macro">format!</span>(<span class="string">&quot;({})&quot;</span>, <span class="ident">lhs</span>)
             } <span class="kw">else</span> {
                 <span class="macro">format!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">lhs</span>)
             };
 
-            <span class="kw">let</span> <span class="ident">rhs_rep</span>  <span class="op">=</span> <span class="kw">if</span> <span class="ident">rhs</span> <span class="op">&lt;</span> <span class="number">0.</span> {
+            <span class="kw">let</span> <span class="ident">rhs_rep</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">rhs</span> <span class="op">&lt;</span> <span class="number">0.</span> {
                 <span class="macro">format!</span>(<span class="string">&quot;({})&quot;</span>, <span class="ident">rhs</span>)
             } <span class="kw">else</span> {
                 <span class="macro">format!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">rhs</span>)
@@ -293,33 +325,41 @@
             <span class="kw">if</span> <span class="ident">result</span>.<span class="ident">is_infinite</span>() {
                 <span class="prelude-val">Err</span>(<span class="ident">Error::new</span>(
                     <span class="ident">ErrorType::Overflow</span>,
-                    <span class="macro">format!</span>(<span class="string">&quot;{}{}{} overflowed f64&quot;</span>, <span class="ident">lhs_rep</span>, <span class="ident">op_representation</span>(<span class="ident">op</span>), <span class="ident">rhs_rep</span>),
+                    <span class="macro">format!</span>(
+                        <span class="string">&quot;{}{}{} overflowed f64&quot;</span>,
+                        <span class="ident">lhs_rep</span>,
+                        <span class="ident">op_representation</span>(<span class="ident">op</span>),
+                        <span class="ident">rhs_rep</span>
+                    ),
                     <span class="ident">tree</span>.<span class="ident">start</span>,
-                    <span class="ident">tree</span>.<span class="ident">end</span>
+                    <span class="ident">tree</span>.<span class="ident">end</span>,
                 ))
             } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">result</span>.<span class="ident">is_nan</span>() {
                 <span class="prelude-val">Err</span>(<span class="ident">Error::new</span>(
                     <span class="ident">ErrorType::UndefinedOperation</span>,
-                    <span class="macro">format!</span>(<span class="string">&quot;{}{}{} is undefined&quot;</span>, <span class="ident">lhs_rep</span>, <span class="ident">op_representation</span>(<span class="ident">op</span>), <span class="ident">rhs_rep</span>),
+                    <span class="macro">format!</span>(
+                        <span class="string">&quot;{}{}{} is undefined&quot;</span>,
+                        <span class="ident">lhs_rep</span>,
+                        <span class="ident">op_representation</span>(<span class="ident">op</span>),
+                        <span class="ident">rhs_rep</span>
+                    ),
                     <span class="ident">tree</span>.<span class="ident">start</span>,
-                    <span class="ident">tree</span>.<span class="ident">end</span>
+                    <span class="ident">tree</span>.<span class="ident">end</span>,
                 ))
             } <span class="kw">else</span> {
                 <span class="prelude-val">Ok</span>(<span class="ident">result</span>)
             }
         }
 
-        <span class="ident">ExpressionData::Identifier</span>(<span class="ident">name</span>) <span class="op">=</span><span class="op">&gt;</span> {
-            <span class="kw">match</span> <span class="ident">context</span>.<span class="ident">get</span>(<span class="kw-2">&amp;</span><span class="ident">name</span>) {
-                <span class="prelude-val">Some</span>(<span class="ident">val</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="kw-2">*</span><span class="ident">val</span>),
-                <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Err</span>(<span class="ident">Error::new</span>(
-                    <span class="ident">ErrorType::UnboundIdentifier</span>,
-                    <span class="macro">format!</span>(<span class="string">&quot;identifier &#39;{}&#39; is not bound&quot;</span>, <span class="ident">name</span>),
-                    <span class="ident">tree</span>.<span class="ident">start</span>,
-                    <span class="ident">tree</span>.<span class="ident">end</span>
-                ))
-            }
-        }
+        <span class="ident">ExpressionData::Identifier</span>(<span class="ident">name</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">match</span> <span class="ident">context</span>.<span class="ident">get</span>(<span class="kw-2">&amp;</span><span class="ident">name</span>) {
+            <span class="prelude-val">Some</span>(<span class="ident">val</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="kw-2">*</span><span class="ident">val</span>),
+            <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Err</span>(<span class="ident">Error::new</span>(
+                <span class="ident">ErrorType::UnboundIdentifier</span>,
+                <span class="macro">format!</span>(<span class="string">&quot;identifier &#39;{}&#39; is not bound&quot;</span>, <span class="ident">name</span>),
+                <span class="ident">tree</span>.<span class="ident">start</span>,
+                <span class="ident">tree</span>.<span class="ident">end</span>,
+            )),
+        },
     }
 }
 
@@ -334,65 +374,77 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">literal</span>() {
-        <span class="kw">let</span> <span class="ident">val</span> <span class="op">=</span> <span class="ident">interpret</span>(<span class="string">&quot;10.3&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">create_context!</span>{}).<span class="ident">unwrap</span>();
+        <span class="kw">let</span> <span class="ident">val</span> <span class="op">=</span> <span class="ident">interpret</span>(<span class="string">&quot;10.3&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">create_context!</span> {}).<span class="ident">unwrap</span>();
         <span class="macro">assert_eq!</span>(<span class="ident">val</span>, <span class="number">10.3</span>);
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">err_from_parse</span>() {
-        <span class="kw">let</span> <span class="ident">err</span> <span class="op">=</span> <span class="ident">interpret</span>(<span class="string">&quot;(1*(2+3)&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">create_context!</span>{}).<span class="ident">unwrap_err</span>();
-        <span class="macro">assert_eq!</span>(<span class="ident">err</span>, <span class="ident">Error::new</span>(
-            <span class="ident">ErrorType::BadParse</span>,
-            <span class="string">&quot;failed to match paren&quot;</span>.<span class="ident">to_string</span>(),
-            <span class="number">0</span>,
-            <span class="number">1</span>
-        ));
+        <span class="kw">let</span> <span class="ident">err</span> <span class="op">=</span> <span class="ident">interpret</span>(<span class="string">&quot;(1*(2+3)&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">create_context!</span> {}).<span class="ident">unwrap_err</span>();
+        <span class="macro">assert_eq!</span>(
+            <span class="ident">err</span>,
+            <span class="ident">Error::new</span>(
+                <span class="ident">ErrorType::BadParse</span>,
+                <span class="string">&quot;failed to match paren&quot;</span>.<span class="ident">to_string</span>(),
+                <span class="number">0</span>,
+                <span class="number">1</span>
+            )
+        );
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">unbound_var</span>() {
-        <span class="kw">let</span> <span class="ident">context</span> <span class="op">=</span> <span class="macro">create_context!</span>{<span class="string">&#39;x&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="number">3.</span>};
+        <span class="kw">let</span> <span class="ident">context</span> <span class="op">=</span> <span class="macro">create_context!</span> {<span class="string">&#39;x&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="number">3.</span>};
 
         <span class="kw">let</span> <span class="ident">err</span> <span class="op">=</span> <span class="ident">interpret</span>(<span class="string">&quot;3 + xy&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">context</span>).<span class="ident">unwrap_err</span>();
-        <span class="macro">assert_eq!</span>(<span class="ident">err</span>, <span class="ident">Error::new</span>(
-            <span class="ident">ErrorType::UnboundIdentifier</span>,
-            <span class="string">&quot;identifier &#39;y&#39; is not bound&quot;</span>.<span class="ident">to_string</span>(),
-            <span class="number">5</span>,
-            <span class="number">6</span>
-        ));
+        <span class="macro">assert_eq!</span>(
+            <span class="ident">err</span>,
+            <span class="ident">Error::new</span>(
+                <span class="ident">ErrorType::UnboundIdentifier</span>,
+                <span class="string">&quot;identifier &#39;y&#39; is not bound&quot;</span>.<span class="ident">to_string</span>(),
+                <span class="number">5</span>,
+                <span class="number">6</span>
+            )
+        );
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">div_zero_1</span>() {
-        <span class="kw">let</span> <span class="ident">err</span> <span class="op">=</span> <span class="ident">interpret</span>(<span class="string">&quot;10/0&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">create_context!</span>{}).<span class="ident">unwrap_err</span>();
-        <span class="macro">assert_eq!</span>(<span class="ident">err</span>, <span class="ident">Error::new</span>(
-            <span class="ident">ErrorType::UndefinedOperation</span>,
-            <span class="string">&quot;10/0 is undefined&quot;</span>.<span class="ident">to_string</span>(),
-            <span class="number">0</span>,
-            <span class="number">4</span>
-        ));
+        <span class="kw">let</span> <span class="ident">err</span> <span class="op">=</span> <span class="ident">interpret</span>(<span class="string">&quot;10/0&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">create_context!</span> {}).<span class="ident">unwrap_err</span>();
+        <span class="macro">assert_eq!</span>(
+            <span class="ident">err</span>,
+            <span class="ident">Error::new</span>(
+                <span class="ident">ErrorType::UndefinedOperation</span>,
+                <span class="string">&quot;10/0 is undefined&quot;</span>.<span class="ident">to_string</span>(),
+                <span class="number">0</span>,
+                <span class="number">4</span>
+            )
+        );
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">div_zero_2</span>() {
-        <span class="kw">let</span> <span class="ident">err</span> <span class="op">=</span> <span class="ident">interpret</span>(<span class="string">&quot;2^(56 / (2 - 2)) * 3&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">create_context!</span>{}).<span class="ident">unwrap_err</span>();
-        <span class="macro">assert_eq!</span>(<span class="ident">err</span>, <span class="ident">Error::new</span>(
-            <span class="ident">ErrorType::UndefinedOperation</span>,
-            <span class="string">&quot;56/0 is undefined&quot;</span>.<span class="ident">to_string</span>(),
-            <span class="number">2</span>,
-            <span class="number">16</span>
-        ));
+        <span class="kw">let</span> <span class="ident">err</span> <span class="op">=</span> <span class="ident">interpret</span>(<span class="string">&quot;2^(56 / (2 - 2)) * 3&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">create_context!</span> {}).<span class="ident">unwrap_err</span>();
+        <span class="macro">assert_eq!</span>(
+            <span class="ident">err</span>,
+            <span class="ident">Error::new</span>(
+                <span class="ident">ErrorType::UndefinedOperation</span>,
+                <span class="string">&quot;56/0 is undefined&quot;</span>.<span class="ident">to_string</span>(),
+                <span class="number">2</span>,
+                <span class="number">16</span>
+            )
+        );
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">simple_add</span>() {
-        <span class="kw">let</span> <span class="ident">val</span> <span class="op">=</span> <span class="ident">interpret</span>(<span class="string">&quot;1 + 2 + 3 + 4.8&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">create_context!</span>{}).<span class="ident">unwrap</span>();
+        <span class="kw">let</span> <span class="ident">val</span> <span class="op">=</span> <span class="ident">interpret</span>(<span class="string">&quot;1 + 2 + 3 + 4.8&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">create_context!</span> {}).<span class="ident">unwrap</span>();
         <span class="macro">assert_eq!</span>(<span class="ident">val</span>, <span class="number">10.8</span>);
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">pythagoras</span>() {
-        <span class="kw">let</span> <span class="ident">context</span> <span class="op">=</span> <span class="macro">create_context!</span>{<span class="string">&#39;x&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="number">3.</span>, <span class="string">&#39;y&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="number">4.</span>};
+        <span class="kw">let</span> <span class="ident">context</span> <span class="op">=</span> <span class="macro">create_context!</span> {<span class="string">&#39;x&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="number">3.</span>, <span class="string">&#39;y&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="number">4.</span>};
 
         <span class="kw">let</span> <span class="ident">val</span> <span class="op">=</span> <span class="ident">interpret</span>(<span class="string">&quot;(x^2 + y^2)^0.5&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">context</span>).<span class="ident">unwrap</span>();
         <span class="macro">assert_eq!</span>(<span class="ident">val</span>, <span class="number">5.</span>);
@@ -400,7 +452,7 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">quadratic</span>() {
-        <span class="kw">let</span> <span class="ident">context</span> <span class="op">=</span> <span class="macro">create_context!</span>{<span class="string">&#39;x&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="number">4.</span>};
+        <span class="kw">let</span> <span class="ident">context</span> <span class="op">=</span> <span class="macro">create_context!</span> {<span class="string">&#39;x&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="number">4.</span>};
 
         <span class="kw">let</span> <span class="ident">val</span> <span class="op">=</span> <span class="ident">interpret</span>(<span class="string">&quot;-2x^2 + 3x - 5&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">context</span>).<span class="ident">unwrap</span>();
         <span class="macro">assert_eq!</span>(<span class="ident">val</span>, <span class="op">-</span><span class="number">25.</span>);
@@ -408,25 +460,32 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">bad_pow</span>() {
-        <span class="kw">let</span> <span class="ident">err</span> <span class="op">=</span> <span class="ident">interpret</span>(<span class="string">&quot;4 + (1 - 2)^0.5&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">create_context!</span>{}).<span class="ident">unwrap_err</span>();
-        <span class="macro">assert_eq!</span>(<span class="ident">err</span>, <span class="ident">Error::new</span>(
-            <span class="ident">ErrorType::UndefinedOperation</span>,
-            <span class="string">&quot;(-1)^0.5 is undefined&quot;</span>.<span class="ident">to_string</span>(),
-            <span class="number">4</span>,
-            <span class="number">15</span>
-        ));
+        <span class="kw">let</span> <span class="ident">err</span> <span class="op">=</span> <span class="ident">interpret</span>(<span class="string">&quot;4 + (1 - 2)^0.5&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">create_context!</span> {}).<span class="ident">unwrap_err</span>();
+        <span class="macro">assert_eq!</span>(
+            <span class="ident">err</span>,
+            <span class="ident">Error::new</span>(
+                <span class="ident">ErrorType::UndefinedOperation</span>,
+                <span class="string">&quot;(-1)^0.5 is undefined&quot;</span>.<span class="ident">to_string</span>(),
+                <span class="number">4</span>,
+                <span class="number">15</span>
+            )
+        );
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">eval_to_infinity</span>() {
-        <span class="kw">let</span> <span class="ident">err</span> <span class="op">=</span> <span class="ident">interpret</span>(<span class="string">&quot;3 + (9 + 1)^999&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">create_context!</span>{}).<span class="ident">unwrap_err</span>();
-        <span class="macro">assert_eq!</span>(<span class="ident">err</span>, <span class="ident">Error::new</span>(
-            <span class="ident">ErrorType::Overflow</span>,
-            <span class="string">&quot;10^999 overflowed f64&quot;</span>.<span class="ident">to_string</span>(),
-            <span class="number">4</span>,
-            <span class="number">15</span>
-        ));
+        <span class="kw">let</span> <span class="ident">err</span> <span class="op">=</span> <span class="ident">interpret</span>(<span class="string">&quot;3 + (9 + 1)^999&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">create_context!</span> {}).<span class="ident">unwrap_err</span>();
+        <span class="macro">assert_eq!</span>(
+            <span class="ident">err</span>,
+            <span class="ident">Error::new</span>(
+                <span class="ident">ErrorType::Overflow</span>,
+                <span class="string">&quot;10^999 overflowed f64&quot;</span>.<span class="ident">to_string</span>(),
+                <span class="number">4</span>,
+                <span class="number">15</span>
+            )
+        );
     }
-}</pre></div>
+}
+</pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="serious" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div>
     <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script></body></html>

@@ -718,6 +718,104 @@
 <span id="715">715</span>
 <span id="716">716</span>
 <span id="717">717</span>
+<span id="718">718</span>
+<span id="719">719</span>
+<span id="720">720</span>
+<span id="721">721</span>
+<span id="722">722</span>
+<span id="723">723</span>
+<span id="724">724</span>
+<span id="725">725</span>
+<span id="726">726</span>
+<span id="727">727</span>
+<span id="728">728</span>
+<span id="729">729</span>
+<span id="730">730</span>
+<span id="731">731</span>
+<span id="732">732</span>
+<span id="733">733</span>
+<span id="734">734</span>
+<span id="735">735</span>
+<span id="736">736</span>
+<span id="737">737</span>
+<span id="738">738</span>
+<span id="739">739</span>
+<span id="740">740</span>
+<span id="741">741</span>
+<span id="742">742</span>
+<span id="743">743</span>
+<span id="744">744</span>
+<span id="745">745</span>
+<span id="746">746</span>
+<span id="747">747</span>
+<span id="748">748</span>
+<span id="749">749</span>
+<span id="750">750</span>
+<span id="751">751</span>
+<span id="752">752</span>
+<span id="753">753</span>
+<span id="754">754</span>
+<span id="755">755</span>
+<span id="756">756</span>
+<span id="757">757</span>
+<span id="758">758</span>
+<span id="759">759</span>
+<span id="760">760</span>
+<span id="761">761</span>
+<span id="762">762</span>
+<span id="763">763</span>
+<span id="764">764</span>
+<span id="765">765</span>
+<span id="766">766</span>
+<span id="767">767</span>
+<span id="768">768</span>
+<span id="769">769</span>
+<span id="770">770</span>
+<span id="771">771</span>
+<span id="772">772</span>
+<span id="773">773</span>
+<span id="774">774</span>
+<span id="775">775</span>
+<span id="776">776</span>
+<span id="777">777</span>
+<span id="778">778</span>
+<span id="779">779</span>
+<span id="780">780</span>
+<span id="781">781</span>
+<span id="782">782</span>
+<span id="783">783</span>
+<span id="784">784</span>
+<span id="785">785</span>
+<span id="786">786</span>
+<span id="787">787</span>
+<span id="788">788</span>
+<span id="789">789</span>
+<span id="790">790</span>
+<span id="791">791</span>
+<span id="792">792</span>
+<span id="793">793</span>
+<span id="794">794</span>
+<span id="795">795</span>
+<span id="796">796</span>
+<span id="797">797</span>
+<span id="798">798</span>
+<span id="799">799</span>
+<span id="800">800</span>
+<span id="801">801</span>
+<span id="802">802</span>
+<span id="803">803</span>
+<span id="804">804</span>
+<span id="805">805</span>
+<span id="806">806</span>
+<span id="807">807</span>
+<span id="808">808</span>
+<span id="809">809</span>
+<span id="810">810</span>
+<span id="811">811</span>
+<span id="812">812</span>
+<span id="813">813</span>
+<span id="814">814</span>
+<span id="815">815</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">super</span><span class="ident">::error</span>::{<span class="ident">Error</span>, <span class="ident">ErrorType</span>};
 <span class="kw">pub</span> <span class="kw">use</span> <span class="kw">super</span><span class="ident">::lexer::Operation</span>;
@@ -732,7 +830,7 @@
     <span class="doccomment">/// A literal constant.</span>
     <span class="ident">Constant</span>(<span class="ident">f64</span>),
     <span class="doccomment">/// A named identifier.</span>
-    <span class="ident">Identifier</span>(<span class="ident">char</span>)
+    <span class="ident">Identifier</span>(<span class="ident">char</span>),
 }
 
 <span class="doccomment">/// The output of a successful parse; contains sub-expressions in a tree structure.</span>
@@ -743,7 +841,7 @@
     <span class="doccomment">/// The start of the expression in the original text.</span>
     <span class="kw">pub</span> <span class="ident">start</span>: <span class="ident">usize</span>,
     <span class="doccomment">/// The end of the expression in the original text.</span>
-    <span class="kw">pub</span> <span class="ident">end</span>: <span class="ident">usize</span>
+    <span class="kw">pub</span> <span class="ident">end</span>: <span class="ident">usize</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">Expression</span> {
@@ -771,7 +869,11 @@
     <span class="doccomment">/// Re-assign the `start` and `end` positions of an expression.</span>
     <span class="doccomment">/// This is useful for including the parentheses around a sub-expression.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">with_bounds</span>(<span class="self">self</span>, <span class="ident">start</span>: <span class="ident">usize</span>, <span class="ident">end</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Expression</span> {
-        <span class="ident">Expression</span> { <span class="ident">data</span>: <span class="self">self</span>.<span class="ident">data</span>, <span class="ident">start</span>, <span class="ident">end</span> }
+        <span class="ident">Expression</span> {
+            <span class="ident">data</span>: <span class="self">self</span>.<span class="ident">data</span>,
+            <span class="ident">start</span>,
+            <span class="ident">end</span>,
+        }
     }
 }
 
@@ -781,22 +883,31 @@
         <span class="ident">Operation::Subtract</span> <span class="op">=</span><span class="op">&gt;</span> <span class="number">0</span>,
         <span class="ident">Operation::Multiply</span> <span class="op">=</span><span class="op">&gt;</span> <span class="number">1</span>,
         <span class="ident">Operation::Divide</span> <span class="op">=</span><span class="op">&gt;</span> <span class="number">1</span>,
-        <span class="ident">Operation::Exponentiate</span> <span class="op">=</span><span class="op">&gt;</span> <span class="number">2</span>
+        <span class="ident">Operation::Exponentiate</span> <span class="op">=</span><span class="op">&gt;</span> <span class="number">2</span>,
     }
 }
 
-<span class="kw">fn</span> <span class="ident">parse_tokens</span>(<span class="ident">tokens</span>: <span class="kw-2">&amp;</span>[<span class="ident">Token</span>], <span class="ident">start</span>: <span class="ident">usize</span>, <span class="ident">expect_close_paren</span>: <span class="ident">bool</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(<span class="ident">Expression</span>, <span class="ident">usize</span>), <span class="ident">Error</span><span class="op">&gt;</span> {
+<span class="kw">fn</span> <span class="ident">parse_tokens</span>(
+    <span class="ident">tokens</span>: <span class="kw-2">&amp;</span>[<span class="ident">Token</span>],
+    <span class="ident">start</span>: <span class="ident">usize</span>,
+    <span class="ident">expect_close_paren</span>: <span class="ident">bool</span>,
+) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(<span class="ident">Expression</span>, <span class="ident">usize</span>), <span class="ident">Error</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">stack</span>: <span class="ident">Vec</span><span class="op">&lt;</span>(<span class="ident">Operation</span>, <span class="ident">Expression</span>)<span class="op">&gt;</span> <span class="op">=</span> <span class="macro">vec!</span>[];
     <span class="kw">let</span> (<span class="kw-2">mut</span> <span class="ident">curr_lhs</span>, <span class="kw-2">mut</span> <span class="ident">i</span>) <span class="op">=</span> <span class="kw">match</span> <span class="ident">tokens</span>[<span class="ident">start</span>].<span class="ident">token_type</span> {
-        <span class="ident">TokenType::Constant</span>(<span class="ident">val</span>) <span class="op">=</span><span class="op">&gt;</span> {
-            (<span class="ident">Expression::new_const</span>(<span class="ident">val</span>, <span class="ident">tokens</span>[<span class="ident">start</span>].<span class="ident">start</span>, <span class="ident">tokens</span>[<span class="ident">start</span>].<span class="ident">end</span>), <span class="ident">start</span> <span class="op">+</span> <span class="number">1</span>)
-        }
-        <span class="ident">TokenType::Identifier</span>(<span class="ident">name</span>) <span class="op">=</span><span class="op">&gt;</span> {
-            (<span class="ident">Expression::new_id</span>(<span class="ident">name</span>, <span class="ident">tokens</span>[<span class="ident">start</span>].<span class="ident">start</span>, <span class="ident">tokens</span>[<span class="ident">start</span>].<span class="ident">end</span>), <span class="ident">start</span> <span class="op">+</span> <span class="number">1</span>)
-        }
+        <span class="ident">TokenType::Constant</span>(<span class="ident">val</span>) <span class="op">=</span><span class="op">&gt;</span> (
+            <span class="ident">Expression::new_const</span>(<span class="ident">val</span>, <span class="ident">tokens</span>[<span class="ident">start</span>].<span class="ident">start</span>, <span class="ident">tokens</span>[<span class="ident">start</span>].<span class="ident">end</span>),
+            <span class="ident">start</span> <span class="op">+</span> <span class="number">1</span>,
+        ),
+        <span class="ident">TokenType::Identifier</span>(<span class="ident">name</span>) <span class="op">=</span><span class="op">&gt;</span> (
+            <span class="ident">Expression::new_id</span>(<span class="ident">name</span>, <span class="ident">tokens</span>[<span class="ident">start</span>].<span class="ident">start</span>, <span class="ident">tokens</span>[<span class="ident">start</span>].<span class="ident">end</span>),
+            <span class="ident">start</span> <span class="op">+</span> <span class="number">1</span>,
+        ),
         <span class="ident">TokenType::Op</span>(<span class="ident">Operation::Subtract</span>) <span class="op">=</span><span class="op">&gt;</span> {
             <span class="comment">// unary minus implemented as a zero-width 0</span>
-            (<span class="ident">Expression::new_const</span>(<span class="number">0.</span>, <span class="ident">tokens</span>[<span class="ident">start</span>].<span class="ident">start</span>, <span class="ident">tokens</span>[<span class="ident">start</span>].<span class="ident">start</span>), <span class="ident">start</span>)
+            (
+                <span class="ident">Expression::new_const</span>(<span class="number">0.</span>, <span class="ident">tokens</span>[<span class="ident">start</span>].<span class="ident">start</span>, <span class="ident">tokens</span>[<span class="ident">start</span>].<span class="ident">start</span>),
+                <span class="ident">start</span>,
+            )
         }
         <span class="ident">TokenType::OpenParen</span> <span class="op">=</span><span class="op">&gt;</span> {
             <span class="kw">if</span> <span class="ident">start</span> <span class="op">+</span> <span class="number">1</span> <span class="op">=</span><span class="op">=</span> <span class="ident">tokens</span>.<span class="ident">len</span>() {
@@ -804,7 +915,7 @@
                     <span class="ident">ErrorType::BadParse</span>,
                     <span class="string">&quot;failed to match paren&quot;</span>.<span class="ident">to_string</span>(),
                     <span class="ident">tokens</span>[<span class="ident">start</span>].<span class="ident">start</span>,
-                    <span class="ident">tokens</span>[<span class="ident">start</span>].<span class="ident">end</span>
+                    <span class="ident">tokens</span>[<span class="ident">start</span>].<span class="ident">end</span>,
                 ));
             }
             <span class="kw">let</span> (<span class="ident">inner_expr</span>, <span class="ident">end_paren</span>) <span class="op">=</span> <span class="ident">parse_tokens</span>(<span class="ident">tokens</span>, <span class="ident">start</span> <span class="op">+</span> <span class="number">1</span>, <span class="bool-val">true</span>)<span class="question-mark">?</span>;
@@ -813,17 +924,20 @@
                     <span class="ident">ErrorType::BadParse</span>,
                     <span class="string">&quot;failed to match paren&quot;</span>.<span class="ident">to_string</span>(),
                     <span class="ident">tokens</span>[<span class="ident">start</span>].<span class="ident">start</span>,
-                    <span class="ident">tokens</span>[<span class="ident">start</span>].<span class="ident">end</span>
+                    <span class="ident">tokens</span>[<span class="ident">start</span>].<span class="ident">end</span>,
                 ));
             }
-            (<span class="ident">inner_expr</span>.<span class="ident">with_bounds</span>(<span class="ident">tokens</span>[<span class="ident">start</span>].<span class="ident">start</span>, <span class="ident">tokens</span>[<span class="ident">end_paren</span>].<span class="ident">end</span>), <span class="ident">end_paren</span> <span class="op">+</span> <span class="number">1</span>)
+            (
+                <span class="ident">inner_expr</span>.<span class="ident">with_bounds</span>(<span class="ident">tokens</span>[<span class="ident">start</span>].<span class="ident">start</span>, <span class="ident">tokens</span>[<span class="ident">end_paren</span>].<span class="ident">end</span>),
+                <span class="ident">end_paren</span> <span class="op">+</span> <span class="number">1</span>,
+            )
         }
         <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> {
             <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::new</span>(
                 <span class="ident">ErrorType::BadParse</span>,
                 <span class="string">&quot;expected expression&quot;</span>.<span class="ident">to_string</span>(),
                 <span class="ident">tokens</span>[<span class="ident">start</span>].<span class="ident">start</span>,
-                <span class="ident">tokens</span>[<span class="ident">start</span>].<span class="ident">end</span>
+                <span class="ident">tokens</span>[<span class="ident">start</span>].<span class="ident">end</span>,
             ))
         }
     };
@@ -840,9 +954,9 @@
                     <span class="ident">ErrorType::BadParse</span>,
                     <span class="string">&quot;constant on RHS of implicit multiplication&quot;</span>.<span class="ident">to_string</span>(),
                     <span class="ident">tokens</span>[<span class="ident">i</span>].<span class="ident">start</span>,
-                    <span class="ident">tokens</span>[<span class="ident">i</span>].<span class="ident">end</span>
+                    <span class="ident">tokens</span>[<span class="ident">i</span>].<span class="ident">end</span>,
                 ))
-            },
+            }
             <span class="ident">TokenType::CloseParen</span> <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="kw">if</span> <span class="ident">expect_close_paren</span> {
                     <span class="kw">break</span>;
@@ -851,8 +965,8 @@
                         <span class="ident">ErrorType::BadParse</span>,
                         <span class="string">&quot;expected expression&quot;</span>.<span class="ident">to_string</span>(),
                         <span class="ident">tokens</span>[<span class="ident">i</span>].<span class="ident">start</span>,
-                        <span class="ident">tokens</span>[<span class="ident">i</span>].<span class="ident">end</span>
-                    ))    
+                        <span class="ident">tokens</span>[<span class="ident">i</span>].<span class="ident">end</span>,
+                    ));
                 }
             }
         };
@@ -862,8 +976,8 @@
                 <span class="ident">ErrorType::BadParse</span>,
                 <span class="string">&quot;expected expression&quot;</span>.<span class="ident">to_string</span>(),
                 <span class="ident">tokens</span>[<span class="ident">i</span> <span class="op">-</span> <span class="number">1</span>].<span class="ident">end</span>,
-                <span class="ident">tokens</span>[<span class="ident">i</span> <span class="op">-</span> <span class="number">1</span>].<span class="ident">end</span> <span class="op">+</span> <span class="number">1</span>
-            ))
+                <span class="ident">tokens</span>[<span class="ident">i</span> <span class="op">-</span> <span class="number">1</span>].<span class="ident">end</span> <span class="op">+</span> <span class="number">1</span>,
+            ));
         }
 
         <span class="kw">let</span> <span class="ident">curr_rhs</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">tokens</span>[<span class="ident">i</span>].<span class="ident">token_type</span> {
@@ -872,15 +986,15 @@
                     <span class="ident">ErrorType::BadParse</span>,
                     <span class="string">&quot;expected expression; wrap in parens for unary minus&quot;</span>.<span class="ident">to_string</span>(),
                     <span class="ident">tokens</span>[<span class="ident">i</span>].<span class="ident">start</span>,
-                    <span class="ident">tokens</span>[<span class="ident">i</span>].<span class="ident">end</span>
-                ))        
+                    <span class="ident">tokens</span>[<span class="ident">i</span>].<span class="ident">end</span>,
+                ))
             }
             <span class="ident">TokenType::Op</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::new</span>(
                     <span class="ident">ErrorType::BadParse</span>,
                     <span class="string">&quot;expected expression&quot;</span>.<span class="ident">to_string</span>(),
                     <span class="ident">tokens</span>[<span class="ident">i</span>].<span class="ident">start</span>,
-                    <span class="ident">tokens</span>[<span class="ident">i</span>].<span class="ident">end</span>
+                    <span class="ident">tokens</span>[<span class="ident">i</span>].<span class="ident">end</span>,
                 ))
             }
             <span class="ident">TokenType::Identifier</span>(<span class="ident">name</span>) <span class="op">=</span><span class="op">&gt;</span> {
@@ -900,18 +1014,18 @@
                         <span class="ident">ErrorType::BadParse</span>,
                         <span class="string">&quot;failed to match paren&quot;</span>.<span class="ident">to_string</span>(),
                         <span class="ident">tokens</span>[<span class="ident">old_i</span>].<span class="ident">start</span>,
-                        <span class="ident">tokens</span>[<span class="ident">old_i</span>].<span class="ident">end</span>
-                    ))
+                        <span class="ident">tokens</span>[<span class="ident">old_i</span>].<span class="ident">end</span>,
+                    ));
                 }
-                <span class="ident">inner_expr</span>.<span class="ident">with_bounds</span>(<span class="ident">tokens</span>[<span class="ident">old_i</span>].<span class="ident">start</span>, <span class="ident">tokens</span>[<span class="ident">end_paren</span>].<span class="ident">end</span>)  
+                <span class="ident">inner_expr</span>.<span class="ident">with_bounds</span>(<span class="ident">tokens</span>[<span class="ident">old_i</span>].<span class="ident">start</span>, <span class="ident">tokens</span>[<span class="ident">end_paren</span>].<span class="ident">end</span>)
             }
             <span class="ident">TokenType::CloseParen</span> <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::new</span>(
                     <span class="ident">ErrorType::BadParse</span>,
                     <span class="string">&quot;expected expression&quot;</span>.<span class="ident">to_string</span>(),
                     <span class="ident">tokens</span>[<span class="ident">i</span>].<span class="ident">start</span>,
-                    <span class="ident">tokens</span>[<span class="ident">i</span>].<span class="ident">end</span>
-                ))    
+                    <span class="ident">tokens</span>[<span class="ident">i</span>].<span class="ident">end</span>,
+                ))
             }
         };
 
@@ -937,14 +1051,17 @@
                         <span class="ident">stack</span>.<span class="ident">push</span>((<span class="ident">prev_prev_op</span>, <span class="ident">prev_prev_rhs</span>));
                         <span class="ident">stack</span>.<span class="ident">push</span>((<span class="ident">prev_op</span>, <span class="ident">Expression::new_op</span>(<span class="ident">prev_rhs</span>, <span class="ident">curr_op</span>, <span class="ident">curr_rhs</span>)));
                     } <span class="kw">else</span> {
-                        <span class="ident">stack</span>.<span class="ident">push</span>((<span class="ident">prev_prev_op</span>, <span class="ident">Expression::new_op</span>(<span class="ident">prev_prev_rhs</span>, <span class="ident">prev_op</span>, <span class="ident">prev_rhs</span>)));
+                        <span class="ident">stack</span>.<span class="ident">push</span>((
+                            <span class="ident">prev_prev_op</span>,
+                            <span class="ident">Expression::new_op</span>(<span class="ident">prev_prev_rhs</span>, <span class="ident">prev_op</span>, <span class="ident">prev_rhs</span>),
+                        ));
                         <span class="ident">stack</span>.<span class="ident">push</span>((<span class="ident">curr_op</span>, <span class="ident">curr_rhs</span>));
                     }
                 } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">prev_precedence_wins</span> {
-                        <span class="ident">stack</span>.<span class="ident">push</span>((<span class="ident">prev_op</span>, <span class="ident">Expression::new_op</span>(<span class="ident">prev_rhs</span>, <span class="ident">curr_op</span>, <span class="ident">curr_rhs</span>)));
+                    <span class="ident">stack</span>.<span class="ident">push</span>((<span class="ident">prev_op</span>, <span class="ident">Expression::new_op</span>(<span class="ident">prev_rhs</span>, <span class="ident">curr_op</span>, <span class="ident">curr_rhs</span>)));
                 } <span class="kw">else</span> {
                     <span class="ident">curr_lhs</span> <span class="op">=</span> <span class="ident">Expression::new_op</span>(<span class="ident">curr_lhs</span>, <span class="ident">prev_op</span>, <span class="ident">prev_rhs</span>);
-                    <span class="ident">stack</span>.<span class="ident">push</span>((<span class="ident">curr_op</span>, <span class="ident">curr_rhs</span>));    
+                    <span class="ident">stack</span>.<span class="ident">push</span>((<span class="ident">curr_op</span>, <span class="ident">curr_rhs</span>));
                 }
             } <span class="kw">else</span> {
                 <span class="ident">stack</span>.<span class="ident">push</span>((<span class="ident">curr_op</span>, <span class="ident">curr_rhs</span>));
@@ -973,23 +1090,24 @@
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">empty</span>() {
         <span class="kw">let</span> <span class="ident">err</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;&quot;</span>).<span class="ident">unwrap_err</span>();
-        <span class="macro">assert_eq!</span>(<span class="ident">err</span>, <span class="ident">Error::new</span>(
-            <span class="ident">ErrorType::BadParse</span>,
-            <span class="string">&quot;expected token&quot;</span>.<span class="ident">to_string</span>(),
-            <span class="number">0</span>,
-            <span class="number">1</span>
-        ));
+        <span class="macro">assert_eq!</span>(
+            <span class="ident">err</span>,
+            <span class="ident">Error::new</span>(<span class="ident">ErrorType::BadParse</span>, <span class="string">&quot;expected token&quot;</span>.<span class="ident">to_string</span>(), <span class="number">0</span>, <span class="number">1</span>)
+        );
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">err_from_lex</span>() {
         <span class="kw">let</span> <span class="ident">err</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;2*0.2.3&quot;</span>).<span class="ident">unwrap_err</span>();
-        <span class="macro">assert_eq!</span>(<span class="ident">err</span>, <span class="ident">Error::new</span>(
-            <span class="ident">ErrorType::BadParse</span>,
-            <span class="string">&quot;invalid float literal&quot;</span>.<span class="ident">to_string</span>(),
-            <span class="number">2</span>,
-            <span class="number">7</span>
-        ));
+        <span class="macro">assert_eq!</span>(
+            <span class="ident">err</span>,
+            <span class="ident">Error::new</span>(
+                <span class="ident">ErrorType::BadParse</span>,
+                <span class="string">&quot;invalid float literal&quot;</span>.<span class="ident">to_string</span>(),
+                <span class="number">2</span>,
+                <span class="number">7</span>
+            )
+        );
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
@@ -1001,440 +1119,519 @@
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">simple_add</span>() {
         <span class="kw">let</span> <span class="ident">tree</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;1+2&quot;</span>).<span class="ident">unwrap</span>();
-        <span class="macro">assert_eq!</span>(<span class="ident">tree</span>, <span class="ident">Expression::new_op</span>(
-            <span class="ident">Expression::new_const</span>(<span class="number">1.</span>, <span class="number">0</span>, <span class="number">1</span>),
-            <span class="ident">Operation::Add</span>,
-            <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">2</span>, <span class="number">3</span>)
-        ));
+        <span class="macro">assert_eq!</span>(
+            <span class="ident">tree</span>,
+            <span class="ident">Expression::new_op</span>(
+                <span class="ident">Expression::new_const</span>(<span class="number">1.</span>, <span class="number">0</span>, <span class="number">1</span>),
+                <span class="ident">Operation::Add</span>,
+                <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">2</span>, <span class="number">3</span>)
+            )
+        );
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">left_associate</span>() {
         <span class="kw">let</span> <span class="ident">tree</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;1+2-3&quot;</span>).<span class="ident">unwrap</span>();
-        <span class="macro">assert_eq!</span>(<span class="ident">tree</span>, <span class="ident">Expression::new_op</span>(
+        <span class="macro">assert_eq!</span>(
+            <span class="ident">tree</span>,
             <span class="ident">Expression::new_op</span>(
-                <span class="ident">Expression::new_const</span>(<span class="number">1.</span>, <span class="number">0</span>, <span class="number">1</span>),
-                <span class="ident">Operation::Add</span>,
-                <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">2</span>, <span class="number">3</span>)
-            ),
-            <span class="ident">Operation::Subtract</span>,
-            <span class="ident">Expression::new_const</span>(<span class="number">3.</span>, <span class="number">4</span>, <span class="number">5</span>)
-        ));
+                <span class="ident">Expression::new_op</span>(
+                    <span class="ident">Expression::new_const</span>(<span class="number">1.</span>, <span class="number">0</span>, <span class="number">1</span>),
+                    <span class="ident">Operation::Add</span>,
+                    <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">2</span>, <span class="number">3</span>)
+                ),
+                <span class="ident">Operation::Subtract</span>,
+                <span class="ident">Expression::new_const</span>(<span class="number">3.</span>, <span class="number">4</span>, <span class="number">5</span>)
+            )
+        );
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">order_of_ops_add_div</span>() {
         <span class="kw">let</span> <span class="ident">tree</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;A + 2/3&quot;</span>).<span class="ident">unwrap</span>();
-        <span class="macro">assert_eq!</span>(<span class="ident">tree</span>, <span class="ident">Expression::new_op</span>(
-            <span class="ident">Expression::new_id</span>(<span class="string">&#39;A&#39;</span>, <span class="number">0</span>, <span class="number">1</span>),
-            <span class="ident">Operation::Add</span>,
+        <span class="macro">assert_eq!</span>(
+            <span class="ident">tree</span>,
             <span class="ident">Expression::new_op</span>(
-                <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">4</span>, <span class="number">5</span>),
-                <span class="ident">Operation::Divide</span>,
-                <span class="ident">Expression::new_const</span>(<span class="number">3.</span>, <span class="number">6</span>, <span class="number">7</span>)
+                <span class="ident">Expression::new_id</span>(<span class="string">&#39;A&#39;</span>, <span class="number">0</span>, <span class="number">1</span>),
+                <span class="ident">Operation::Add</span>,
+                <span class="ident">Expression::new_op</span>(
+                    <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">4</span>, <span class="number">5</span>),
+                    <span class="ident">Operation::Divide</span>,
+                    <span class="ident">Expression::new_const</span>(<span class="number">3.</span>, <span class="number">6</span>, <span class="number">7</span>)
+                )
             )
-        ));
+        );
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">order_of_ops_mult_exp</span>() {
         <span class="kw">let</span> <span class="ident">tree</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;2x^3&quot;</span>).<span class="ident">unwrap</span>();
-        <span class="macro">assert_eq!</span>(<span class="ident">tree</span>, <span class="ident">Expression::new_op</span>(
-            <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">0</span>, <span class="number">1</span>),
-            <span class="ident">Operation::Multiply</span>,
+        <span class="macro">assert_eq!</span>(
+            <span class="ident">tree</span>,
             <span class="ident">Expression::new_op</span>(
-                <span class="ident">Expression::new_id</span>(<span class="string">&#39;x&#39;</span>, <span class="number">1</span>, <span class="number">2</span>),
-                <span class="ident">Operation::Exponentiate</span>,
-                <span class="ident">Expression::new_const</span>(<span class="number">3.</span>, <span class="number">3</span>, <span class="number">4</span>)
+                <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">0</span>, <span class="number">1</span>),
+                <span class="ident">Operation::Multiply</span>,
+                <span class="ident">Expression::new_op</span>(
+                    <span class="ident">Expression::new_id</span>(<span class="string">&#39;x&#39;</span>, <span class="number">1</span>, <span class="number">2</span>),
+                    <span class="ident">Operation::Exponentiate</span>,
+                    <span class="ident">Expression::new_const</span>(<span class="number">3.</span>, <span class="number">3</span>, <span class="number">4</span>)
+                )
             )
-        ));
+        );
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">order_of_ops_multilevel_1</span>() {
         <span class="kw">let</span> <span class="ident">tree</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;2x^4 + x*3&quot;</span>).<span class="ident">unwrap</span>();
-        <span class="macro">assert_eq!</span>(<span class="ident">tree</span>, <span class="ident">Expression::new_op</span>(
+        <span class="macro">assert_eq!</span>(
+            <span class="ident">tree</span>,
             <span class="ident">Expression::new_op</span>(
-                <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">0</span>, <span class="number">1</span>),
-                <span class="ident">Operation::Multiply</span>,
                 <span class="ident">Expression::new_op</span>(
-                    <span class="ident">Expression::new_id</span>(<span class="string">&#39;x&#39;</span>, <span class="number">1</span>, <span class="number">2</span>),
-                    <span class="ident">Operation::Exponentiate</span>,
-                    <span class="ident">Expression::new_const</span>(<span class="number">4.</span>, <span class="number">3</span>, <span class="number">4</span>)
+                    <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">0</span>, <span class="number">1</span>),
+                    <span class="ident">Operation::Multiply</span>,
+                    <span class="ident">Expression::new_op</span>(
+                        <span class="ident">Expression::new_id</span>(<span class="string">&#39;x&#39;</span>, <span class="number">1</span>, <span class="number">2</span>),
+                        <span class="ident">Operation::Exponentiate</span>,
+                        <span class="ident">Expression::new_const</span>(<span class="number">4.</span>, <span class="number">3</span>, <span class="number">4</span>)
+                    )
+                ),
+                <span class="ident">Operation::Add</span>,
+                <span class="ident">Expression::new_op</span>(
+                    <span class="ident">Expression::new_id</span>(<span class="string">&#39;x&#39;</span>, <span class="number">7</span>, <span class="number">8</span>),
+                    <span class="ident">Operation::Multiply</span>,
+                    <span class="ident">Expression::new_const</span>(<span class="number">3.</span>, <span class="number">9</span>, <span class="number">10</span>)
                 )
-            ),
-            <span class="ident">Operation::Add</span>,
-            <span class="ident">Expression::new_op</span>(
-                <span class="ident">Expression::new_id</span>(<span class="string">&#39;x&#39;</span>, <span class="number">7</span>, <span class="number">8</span>),
-                <span class="ident">Operation::Multiply</span>,
-                <span class="ident">Expression::new_const</span>(<span class="number">3.</span>, <span class="number">9</span>, <span class="number">10</span>)
             )
-        ));
+        );
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">order_of_ops_multilevel_2</span>() {
         <span class="kw">let</span> <span class="ident">tree</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;1+2*3 * 4^5&quot;</span>).<span class="ident">unwrap</span>();
-        <span class="macro">assert_eq!</span>(<span class="ident">tree</span>, <span class="ident">Expression::new_op</span>(
-            <span class="ident">Expression::new_const</span>(<span class="number">1.</span>, <span class="number">0</span>, <span class="number">1</span>),
-            <span class="ident">Operation::Add</span>,
+        <span class="macro">assert_eq!</span>(
+            <span class="ident">tree</span>,
             <span class="ident">Expression::new_op</span>(
+                <span class="ident">Expression::new_const</span>(<span class="number">1.</span>, <span class="number">0</span>, <span class="number">1</span>),
+                <span class="ident">Operation::Add</span>,
                 <span class="ident">Expression::new_op</span>(
-                    <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">2</span>, <span class="number">3</span>),
+                    <span class="ident">Expression::new_op</span>(
+                        <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">2</span>, <span class="number">3</span>),
+                        <span class="ident">Operation::Multiply</span>,
+                        <span class="ident">Expression::new_const</span>(<span class="number">3.</span>, <span class="number">4</span>, <span class="number">5</span>)
+                    ),
                     <span class="ident">Operation::Multiply</span>,
-                    <span class="ident">Expression::new_const</span>(<span class="number">3.</span>, <span class="number">4</span>, <span class="number">5</span>)
-                ),
-                <span class="ident">Operation::Multiply</span>,
-                <span class="ident">Expression::new_op</span>(
-                    <span class="ident">Expression::new_const</span>(<span class="number">4.</span>, <span class="number">8</span>, <span class="number">9</span>),
-                    <span class="ident">Operation::Exponentiate</span>,
-                    <span class="ident">Expression::new_const</span>(<span class="number">5.</span>, <span class="number">10</span>, <span class="number">11</span>)
+                    <span class="ident">Expression::new_op</span>(
+                        <span class="ident">Expression::new_const</span>(<span class="number">4.</span>, <span class="number">8</span>, <span class="number">9</span>),
+                        <span class="ident">Operation::Exponentiate</span>,
+                        <span class="ident">Expression::new_const</span>(<span class="number">5.</span>, <span class="number">10</span>, <span class="number">11</span>)
+                    )
                 )
             )
-        ));
+        );
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">order_of_ops_multilevel_3</span>() {
         <span class="kw">let</span> <span class="ident">tree</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;1 + xy^2^3&quot;</span>).<span class="ident">unwrap</span>();
-        <span class="macro">assert_eq!</span>(<span class="ident">tree</span>, <span class="ident">Expression::new_op</span>(
-            <span class="ident">Expression::new_const</span>(<span class="number">1.</span>, <span class="number">0</span>, <span class="number">1</span>),
-            <span class="ident">Operation::Add</span>,
+        <span class="macro">assert_eq!</span>(
+            <span class="ident">tree</span>,
             <span class="ident">Expression::new_op</span>(
-                <span class="ident">Expression::new_id</span>(<span class="string">&#39;x&#39;</span>, <span class="number">4</span>, <span class="number">5</span>),
-                <span class="ident">Operation::Multiply</span>,
+                <span class="ident">Expression::new_const</span>(<span class="number">1.</span>, <span class="number">0</span>, <span class="number">1</span>),
+                <span class="ident">Operation::Add</span>,
                 <span class="ident">Expression::new_op</span>(
+                    <span class="ident">Expression::new_id</span>(<span class="string">&#39;x&#39;</span>, <span class="number">4</span>, <span class="number">5</span>),
+                    <span class="ident">Operation::Multiply</span>,
                     <span class="ident">Expression::new_op</span>(
-                        <span class="ident">Expression::new_id</span>(<span class="string">&#39;y&#39;</span>, <span class="number">5</span>, <span class="number">6</span>),
+                        <span class="ident">Expression::new_op</span>(
+                            <span class="ident">Expression::new_id</span>(<span class="string">&#39;y&#39;</span>, <span class="number">5</span>, <span class="number">6</span>),
+                            <span class="ident">Operation::Exponentiate</span>,
+                            <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">7</span>, <span class="number">8</span>)
+                        ),
                         <span class="ident">Operation::Exponentiate</span>,
-                        <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">7</span>, <span class="number">8</span>)
-                    ),
-                    <span class="ident">Operation::Exponentiate</span>,
-                    <span class="ident">Expression::new_const</span>(<span class="number">3.</span>, <span class="number">9</span>, <span class="number">10</span>)
+                        <span class="ident">Expression::new_const</span>(<span class="number">3.</span>, <span class="number">9</span>, <span class="number">10</span>)
+                    )
                 )
             )
-        ));
+        );
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">simple_parens</span>() {
         <span class="kw">let</span> <span class="ident">tree</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;2*( x + 0.4 )&quot;</span>).<span class="ident">unwrap</span>();
-        <span class="macro">assert_eq!</span>(<span class="ident">tree</span>, <span class="ident">Expression::new_op</span>(
-            <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">0</span>, <span class="number">1</span>),
-            <span class="ident">Operation::Multiply</span>,
+        <span class="macro">assert_eq!</span>(
+            <span class="ident">tree</span>,
             <span class="ident">Expression::new_op</span>(
-                <span class="ident">Expression::new_id</span>(<span class="string">&#39;x&#39;</span>, <span class="number">4</span>, <span class="number">5</span>),
-                <span class="ident">Operation::Add</span>,
-                <span class="ident">Expression::new_const</span>(<span class="number">0.4</span>, <span class="number">8</span>, <span class="number">11</span>)
-            ).<span class="ident">with_bounds</span>(<span class="number">2</span>, <span class="number">13</span>)
-        ));
+                <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">0</span>, <span class="number">1</span>),
+                <span class="ident">Operation::Multiply</span>,
+                <span class="ident">Expression::new_op</span>(
+                    <span class="ident">Expression::new_id</span>(<span class="string">&#39;x&#39;</span>, <span class="number">4</span>, <span class="number">5</span>),
+                    <span class="ident">Operation::Add</span>,
+                    <span class="ident">Expression::new_const</span>(<span class="number">0.4</span>, <span class="number">8</span>, <span class="number">11</span>)
+                )
+                .<span class="ident">with_bounds</span>(<span class="number">2</span>, <span class="number">13</span>)
+            )
+        );
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">nested_parens</span>() {
         <span class="kw">let</span> <span class="ident">tree</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;(x+y)(2^(20z))^2&quot;</span>).<span class="ident">unwrap</span>();
-        <span class="macro">assert_eq!</span>(<span class="ident">tree</span>, <span class="ident">Expression::new_op</span>(
-            <span class="ident">Expression::new_op</span>(
-                <span class="ident">Expression::new_id</span>(<span class="string">&#39;x&#39;</span>, <span class="number">1</span>, <span class="number">2</span>),
-                <span class="ident">Operation::Add</span>,
-                <span class="ident">Expression::new_id</span>(<span class="string">&#39;y&#39;</span>, <span class="number">3</span>, <span class="number">4</span>)
-            ).<span class="ident">with_bounds</span>(<span class="number">0</span>, <span class="number">5</span>),
-            <span class="ident">Operation::Multiply</span>,
+        <span class="macro">assert_eq!</span>(
+            <span class="ident">tree</span>,
             <span class="ident">Expression::new_op</span>(
                 <span class="ident">Expression::new_op</span>(
-                    <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">6</span>, <span class="number">7</span>),
-                    <span class="ident">Operation::Exponentiate</span>,
+                    <span class="ident">Expression::new_id</span>(<span class="string">&#39;x&#39;</span>, <span class="number">1</span>, <span class="number">2</span>),
+                    <span class="ident">Operation::Add</span>,
+                    <span class="ident">Expression::new_id</span>(<span class="string">&#39;y&#39;</span>, <span class="number">3</span>, <span class="number">4</span>)
+                )
+                .<span class="ident">with_bounds</span>(<span class="number">0</span>, <span class="number">5</span>),
+                <span class="ident">Operation::Multiply</span>,
+                <span class="ident">Expression::new_op</span>(
                     <span class="ident">Expression::new_op</span>(
-                        <span class="ident">Expression::new_const</span>(<span class="number">20.</span>, <span class="number">9</span>, <span class="number">11</span>),
-                        <span class="ident">Operation::Multiply</span>,
-                        <span class="ident">Expression::new_id</span>(<span class="string">&#39;z&#39;</span>, <span class="number">11</span>, <span class="number">12</span>)
-                    ).<span class="ident">with_bounds</span>(<span class="number">8</span>, <span class="number">13</span>)
-                ).<span class="ident">with_bounds</span>(<span class="number">5</span>, <span class="number">14</span>),
-                <span class="ident">Operation::Exponentiate</span>,
-                <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">15</span>, <span class="number">16</span>)
+                        <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">6</span>, <span class="number">7</span>),
+                        <span class="ident">Operation::Exponentiate</span>,
+                        <span class="ident">Expression::new_op</span>(
+                            <span class="ident">Expression::new_const</span>(<span class="number">20.</span>, <span class="number">9</span>, <span class="number">11</span>),
+                            <span class="ident">Operation::Multiply</span>,
+                            <span class="ident">Expression::new_id</span>(<span class="string">&#39;z&#39;</span>, <span class="number">11</span>, <span class="number">12</span>)
+                        )
+                        .<span class="ident">with_bounds</span>(<span class="number">8</span>, <span class="number">13</span>)
+                    )
+                    .<span class="ident">with_bounds</span>(<span class="number">5</span>, <span class="number">14</span>),
+                    <span class="ident">Operation::Exponentiate</span>,
+                    <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">15</span>, <span class="number">16</span>)
+                )
             )
-        ));
+        );
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">extra_open_paren</span>() {
         <span class="kw">let</span> <span class="ident">err</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;(1*(2+3)&quot;</span>).<span class="ident">unwrap_err</span>();
-        <span class="macro">assert_eq!</span>(<span class="ident">err</span>, <span class="ident">Error::new</span>(
-            <span class="ident">ErrorType::BadParse</span>,
-            <span class="string">&quot;failed to match paren&quot;</span>.<span class="ident">to_string</span>(),
-            <span class="number">0</span>,
-            <span class="number">1</span>
-        ));
+        <span class="macro">assert_eq!</span>(
+            <span class="ident">err</span>,
+            <span class="ident">Error::new</span>(
+                <span class="ident">ErrorType::BadParse</span>,
+                <span class="string">&quot;failed to match paren&quot;</span>.<span class="ident">to_string</span>(),
+                <span class="number">0</span>,
+                <span class="number">1</span>
+            )
+        );
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">extra_close_paren</span>() {
         <span class="kw">let</span> <span class="ident">err</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;3 + ((4*1)^2+(2+3))) + 6&quot;</span>).<span class="ident">unwrap_err</span>();
-        <span class="macro">assert_eq!</span>(<span class="ident">err</span>, <span class="ident">Error::new</span>(
-            <span class="ident">ErrorType::BadParse</span>,
-            <span class="string">&quot;expected expression&quot;</span>.<span class="ident">to_string</span>(),
-            <span class="number">19</span>,
-            <span class="number">20</span>
-        ));
+        <span class="macro">assert_eq!</span>(
+            <span class="ident">err</span>,
+            <span class="ident">Error::new</span>(
+                <span class="ident">ErrorType::BadParse</span>,
+                <span class="string">&quot;expected expression&quot;</span>.<span class="ident">to_string</span>(),
+                <span class="number">19</span>,
+                <span class="number">20</span>
+            )
+        );
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">implicit_mult_identifier</span>() {
         <span class="kw">let</span> <span class="ident">tree</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;2+4x+7&quot;</span>).<span class="ident">unwrap</span>();
-        <span class="macro">assert_eq!</span>(<span class="ident">tree</span>, <span class="ident">Expression::new_op</span>(
+        <span class="macro">assert_eq!</span>(
+            <span class="ident">tree</span>,
             <span class="ident">Expression::new_op</span>(
-                <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">0</span>, <span class="number">1</span>),
-                <span class="ident">Operation::Add</span>,
                 <span class="ident">Expression::new_op</span>(
-                    <span class="ident">Expression::new_const</span>(<span class="number">4.</span>, <span class="number">2</span>, <span class="number">3</span>),
-                    <span class="ident">Operation::Multiply</span>,
-                    <span class="ident">Expression::new_id</span>(<span class="string">&#39;x&#39;</span>, <span class="number">3</span>, <span class="number">4</span>)
-                )
-            ),
-            <span class="ident">Operation::Add</span>,
-            <span class="ident">Expression::new_const</span>(<span class="number">7.</span>, <span class="number">5</span>, <span class="number">6</span>)
-        ));
+                    <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">0</span>, <span class="number">1</span>),
+                    <span class="ident">Operation::Add</span>,
+                    <span class="ident">Expression::new_op</span>(
+                        <span class="ident">Expression::new_const</span>(<span class="number">4.</span>, <span class="number">2</span>, <span class="number">3</span>),
+                        <span class="ident">Operation::Multiply</span>,
+                        <span class="ident">Expression::new_id</span>(<span class="string">&#39;x&#39;</span>, <span class="number">3</span>, <span class="number">4</span>)
+                    )
+                ),
+                <span class="ident">Operation::Add</span>,
+                <span class="ident">Expression::new_const</span>(<span class="number">7.</span>, <span class="number">5</span>, <span class="number">6</span>)
+            )
+        );
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">attempt_const_implicit_mult</span>() {
         <span class="kw">let</span> <span class="ident">err</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;x3&quot;</span>).<span class="ident">unwrap_err</span>();
-        <span class="macro">assert_eq!</span>(<span class="ident">err</span>, <span class="ident">Error::new</span>(
-            <span class="ident">ErrorType::BadParse</span>,
-            <span class="string">&quot;constant on RHS of implicit multiplication&quot;</span>.<span class="ident">to_string</span>(),
-            <span class="number">1</span>,
-            <span class="number">2</span>
-        ));
+        <span class="macro">assert_eq!</span>(
+            <span class="ident">err</span>,
+            <span class="ident">Error::new</span>(
+                <span class="ident">ErrorType::BadParse</span>,
+                <span class="string">&quot;constant on RHS of implicit multiplication&quot;</span>.<span class="ident">to_string</span>(),
+                <span class="number">1</span>,
+                <span class="number">2</span>
+            )
+        );
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">empty_paren</span>() {
         <span class="kw">let</span> <span class="ident">err</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;x()&quot;</span>).<span class="ident">unwrap_err</span>();
-        <span class="macro">assert_eq!</span>(<span class="ident">err</span>, <span class="ident">Error::new</span>(
-            <span class="ident">ErrorType::BadParse</span>,
-            <span class="string">&quot;expected expression&quot;</span>.<span class="ident">to_string</span>(),
-            <span class="number">2</span>,
-            <span class="number">3</span>
-        ));
+        <span class="macro">assert_eq!</span>(
+            <span class="ident">err</span>,
+            <span class="ident">Error::new</span>(<span class="ident">ErrorType::BadParse</span>, <span class="string">&quot;expected expression&quot;</span>.<span class="ident">to_string</span>(), <span class="number">2</span>, <span class="number">3</span>)
+        );
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">just_paren</span>() {
         <span class="kw">let</span> <span class="ident">err</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;(&quot;</span>).<span class="ident">unwrap_err</span>();
-        <span class="macro">assert_eq!</span>(<span class="ident">err</span>, <span class="ident">Error::new</span>(
-            <span class="ident">ErrorType::BadParse</span>,
-            <span class="string">&quot;failed to match paren&quot;</span>.<span class="ident">to_string</span>(),
-            <span class="number">0</span>,
-            <span class="number">1</span>
-        ));
+        <span class="macro">assert_eq!</span>(
+            <span class="ident">err</span>,
+            <span class="ident">Error::new</span>(
+                <span class="ident">ErrorType::BadParse</span>,
+                <span class="string">&quot;failed to match paren&quot;</span>.<span class="ident">to_string</span>(),
+                <span class="number">0</span>,
+                <span class="number">1</span>
+            )
+        );
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">complex_implicit_mult_identifier</span>() {
         <span class="kw">let</span> <span class="ident">tree</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;4x^2 + 2xy&quot;</span>).<span class="ident">unwrap</span>();
-        <span class="macro">assert_eq!</span>(<span class="ident">tree</span>, <span class="ident">Expression::new_op</span>(
-            <span class="ident">Expression::new_op</span>(
-                <span class="ident">Expression::new_const</span>(<span class="number">4.</span>, <span class="number">0</span>, <span class="number">1</span>),
-                <span class="ident">Operation::Multiply</span>,
-                <span class="ident">Expression::new_op</span>(
-                    <span class="ident">Expression::new_id</span>(<span class="string">&#39;x&#39;</span>, <span class="number">1</span>, <span class="number">2</span>),
-                    <span class="ident">Operation::Exponentiate</span>,
-                    <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">3</span>, <span class="number">4</span>)
-                )
-            ),
-            <span class="ident">Operation::Add</span>,
+        <span class="macro">assert_eq!</span>(
+            <span class="ident">tree</span>,
             <span class="ident">Expression::new_op</span>(
                 <span class="ident">Expression::new_op</span>(
-                    <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">7</span>, <span class="number">8</span>),
+                    <span class="ident">Expression::new_const</span>(<span class="number">4.</span>, <span class="number">0</span>, <span class="number">1</span>),
                     <span class="ident">Operation::Multiply</span>,
-                    <span class="ident">Expression::new_id</span>(<span class="string">&#39;x&#39;</span>, <span class="number">8</span>, <span class="number">9</span>)
+                    <span class="ident">Expression::new_op</span>(
+                        <span class="ident">Expression::new_id</span>(<span class="string">&#39;x&#39;</span>, <span class="number">1</span>, <span class="number">2</span>),
+                        <span class="ident">Operation::Exponentiate</span>,
+                        <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">3</span>, <span class="number">4</span>)
+                    )
                 ),
-                <span class="ident">Operation::Multiply</span>,
-                <span class="ident">Expression::new_id</span>(<span class="string">&#39;y&#39;</span>, <span class="number">9</span>, <span class="number">10</span>),
-            ),
-        ));
+                <span class="ident">Operation::Add</span>,
+                <span class="ident">Expression::new_op</span>(
+                    <span class="ident">Expression::new_op</span>(
+                        <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">7</span>, <span class="number">8</span>),
+                        <span class="ident">Operation::Multiply</span>,
+                        <span class="ident">Expression::new_id</span>(<span class="string">&#39;x&#39;</span>, <span class="number">8</span>, <span class="number">9</span>)
+                    ),
+                    <span class="ident">Operation::Multiply</span>,
+                    <span class="ident">Expression::new_id</span>(<span class="string">&#39;y&#39;</span>, <span class="number">9</span>, <span class="number">10</span>),
+                ),
+            )
+        );
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">complex_implicit_mult_parens</span>() {
         <span class="kw">let</span> <span class="ident">tree</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;4z(9x^2 + 30)&quot;</span>).<span class="ident">unwrap</span>();
-        <span class="macro">assert_eq!</span>(<span class="ident">tree</span>, <span class="ident">Expression::new_op</span>(
-            <span class="ident">Expression::new_op</span>(
-                <span class="ident">Expression::new_const</span>(<span class="number">4.</span>, <span class="number">0</span>, <span class="number">1</span>),
-                <span class="ident">Operation::Multiply</span>,
-                <span class="ident">Expression::new_id</span>(<span class="string">&#39;z&#39;</span>, <span class="number">1</span>, <span class="number">2</span>)
-            ),
-            <span class="ident">Operation::Multiply</span>,
+        <span class="macro">assert_eq!</span>(
+            <span class="ident">tree</span>,
             <span class="ident">Expression::new_op</span>(
                 <span class="ident">Expression::new_op</span>(
-                    <span class="ident">Expression::new_const</span>(<span class="number">9.</span>, <span class="number">3</span>, <span class="number">4</span>),
+                    <span class="ident">Expression::new_const</span>(<span class="number">4.</span>, <span class="number">0</span>, <span class="number">1</span>),
                     <span class="ident">Operation::Multiply</span>,
-                    <span class="ident">Expression::new_op</span>(
-                        <span class="ident">Expression::new_id</span>(<span class="string">&#39;x&#39;</span>, <span class="number">4</span>, <span class="number">5</span>),
-                        <span class="ident">Operation::Exponentiate</span>,
-                        <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">6</span>, <span class="number">7</span>)
-                    )
+                    <span class="ident">Expression::new_id</span>(<span class="string">&#39;z&#39;</span>, <span class="number">1</span>, <span class="number">2</span>)
                 ),
-                <span class="ident">Operation::Add</span>,
-                <span class="ident">Expression::new_const</span>(<span class="number">30.</span>, <span class="number">10</span>, <span class="number">12</span>),
-            ).<span class="ident">with_bounds</span>(<span class="number">2</span>, <span class="number">13</span>),
-        ));
+                <span class="ident">Operation::Multiply</span>,
+                <span class="ident">Expression::new_op</span>(
+                    <span class="ident">Expression::new_op</span>(
+                        <span class="ident">Expression::new_const</span>(<span class="number">9.</span>, <span class="number">3</span>, <span class="number">4</span>),
+                        <span class="ident">Operation::Multiply</span>,
+                        <span class="ident">Expression::new_op</span>(
+                            <span class="ident">Expression::new_id</span>(<span class="string">&#39;x&#39;</span>, <span class="number">4</span>, <span class="number">5</span>),
+                            <span class="ident">Operation::Exponentiate</span>,
+                            <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">6</span>, <span class="number">7</span>)
+                        )
+                    ),
+                    <span class="ident">Operation::Add</span>,
+                    <span class="ident">Expression::new_const</span>(<span class="number">30.</span>, <span class="number">10</span>, <span class="number">12</span>),
+                )
+                .<span class="ident">with_bounds</span>(<span class="number">2</span>, <span class="number">13</span>),
+            )
+        );
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">factored_quadratic</span>() {
         <span class="kw">let</span> <span class="ident">tree</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;(2a+5)(a-4)&quot;</span>).<span class="ident">unwrap</span>();
-        <span class="macro">assert_eq!</span>(<span class="ident">tree</span>, <span class="ident">Expression::new_op</span>(
+        <span class="macro">assert_eq!</span>(
+            <span class="ident">tree</span>,
             <span class="ident">Expression::new_op</span>(
                 <span class="ident">Expression::new_op</span>(
-                    <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">1</span>, <span class="number">2</span>),
-                    <span class="ident">Operation::Multiply</span>,
-                    <span class="ident">Expression::new_id</span>(<span class="string">&#39;a&#39;</span>, <span class="number">2</span>, <span class="number">3</span>)
-                ),
-                <span class="ident">Operation::Add</span>,
-                <span class="ident">Expression::new_const</span>(<span class="number">5.</span>, <span class="number">4</span>, <span class="number">5</span>)
-            ).<span class="ident">with_bounds</span>(<span class="number">0</span>, <span class="number">6</span>),
-            <span class="ident">Operation::Multiply</span>,
-            <span class="ident">Expression::new_op</span>(
-                <span class="ident">Expression::new_id</span>(<span class="string">&#39;a&#39;</span>, <span class="number">7</span>, <span class="number">8</span>),
-                <span class="ident">Operation::Subtract</span>,
-                <span class="ident">Expression::new_const</span>(<span class="number">4.</span>, <span class="number">9</span>, <span class="number">10</span>),
-            ).<span class="ident">with_bounds</span>(<span class="number">6</span>, <span class="number">11</span>)
-        ));
+                    <span class="ident">Expression::new_op</span>(
+                        <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">1</span>, <span class="number">2</span>),
+                        <span class="ident">Operation::Multiply</span>,
+                        <span class="ident">Expression::new_id</span>(<span class="string">&#39;a&#39;</span>, <span class="number">2</span>, <span class="number">3</span>)
+                    ),
+                    <span class="ident">Operation::Add</span>,
+                    <span class="ident">Expression::new_const</span>(<span class="number">5.</span>, <span class="number">4</span>, <span class="number">5</span>)
+                )
+                .<span class="ident">with_bounds</span>(<span class="number">0</span>, <span class="number">6</span>),
+                <span class="ident">Operation::Multiply</span>,
+                <span class="ident">Expression::new_op</span>(
+                    <span class="ident">Expression::new_id</span>(<span class="string">&#39;a&#39;</span>, <span class="number">7</span>, <span class="number">8</span>),
+                    <span class="ident">Operation::Subtract</span>,
+                    <span class="ident">Expression::new_const</span>(<span class="number">4.</span>, <span class="number">9</span>, <span class="number">10</span>),
+                )
+                .<span class="ident">with_bounds</span>(<span class="number">6</span>, <span class="number">11</span>)
+            )
+        );
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">factored_quartic</span>() {
         <span class="kw">let</span> <span class="ident">tree</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;(a + 2)(a - 4)(a^20 + 8) + 4&quot;</span>).<span class="ident">unwrap</span>();
-        <span class="macro">assert_eq!</span>(<span class="ident">tree</span>, <span class="ident">Expression::new_op</span>(
+        <span class="macro">assert_eq!</span>(
+            <span class="ident">tree</span>,
             <span class="ident">Expression::new_op</span>(
                 <span class="ident">Expression::new_op</span>(
                     <span class="ident">Expression::new_op</span>(
-                        <span class="ident">Expression::new_id</span>(<span class="string">&#39;a&#39;</span>, <span class="number">1</span>, <span class="number">2</span>),
-                        <span class="ident">Operation::Add</span>,
-                        <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">5</span>, <span class="number">6</span>)
-                    ).<span class="ident">with_bounds</span>(<span class="number">0</span>, <span class="number">7</span>),
+                        <span class="ident">Expression::new_op</span>(
+                            <span class="ident">Expression::new_id</span>(<span class="string">&#39;a&#39;</span>, <span class="number">1</span>, <span class="number">2</span>),
+                            <span class="ident">Operation::Add</span>,
+                            <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">5</span>, <span class="number">6</span>)
+                        )
+                        .<span class="ident">with_bounds</span>(<span class="number">0</span>, <span class="number">7</span>),
+                        <span class="ident">Operation::Multiply</span>,
+                        <span class="ident">Expression::new_op</span>(
+                            <span class="ident">Expression::new_id</span>(<span class="string">&#39;a&#39;</span>, <span class="number">8</span>, <span class="number">9</span>),
+                            <span class="ident">Operation::Subtract</span>,
+                            <span class="ident">Expression::new_const</span>(<span class="number">4.</span>, <span class="number">12</span>, <span class="number">13</span>),
+                        )
+                        .<span class="ident">with_bounds</span>(<span class="number">7</span>, <span class="number">14</span>)
+                    ),
                     <span class="ident">Operation::Multiply</span>,
                     <span class="ident">Expression::new_op</span>(
-                        <span class="ident">Expression::new_id</span>(<span class="string">&#39;a&#39;</span>, <span class="number">8</span>, <span class="number">9</span>),
-                        <span class="ident">Operation::Subtract</span>,
-                        <span class="ident">Expression::new_const</span>(<span class="number">4.</span>, <span class="number">12</span>, <span class="number">13</span>),
-                    ).<span class="ident">with_bounds</span>(<span class="number">7</span>, <span class="number">14</span>)                
+                        <span class="ident">Expression::new_op</span>(
+                            <span class="ident">Expression::new_id</span>(<span class="string">&#39;a&#39;</span>, <span class="number">15</span>, <span class="number">16</span>),
+                            <span class="ident">Operation::Exponentiate</span>,
+                            <span class="ident">Expression::new_const</span>(<span class="number">20.</span>, <span class="number">17</span>, <span class="number">19</span>)
+                        ),
+                        <span class="ident">Operation::Add</span>,
+                        <span class="ident">Expression::new_const</span>(<span class="number">8.</span>, <span class="number">22</span>, <span class="number">23</span>)
+                    )
+                    .<span class="ident">with_bounds</span>(<span class="number">14</span>, <span class="number">24</span>)
                 ),
-                <span class="ident">Operation::Multiply</span>,
-                <span class="ident">Expression::new_op</span>(
-                    <span class="ident">Expression::new_op</span>(
-                        <span class="ident">Expression::new_id</span>(<span class="string">&#39;a&#39;</span>, <span class="number">15</span>, <span class="number">16</span>),
-                        <span class="ident">Operation::Exponentiate</span>,
-                        <span class="ident">Expression::new_const</span>(<span class="number">20.</span>, <span class="number">17</span>, <span class="number">19</span>)
-                    ),
-                    <span class="ident">Operation::Add</span>,
-                    <span class="ident">Expression::new_const</span>(<span class="number">8.</span>, <span class="number">22</span>, <span class="number">23</span>)
-                ).<span class="ident">with_bounds</span>(<span class="number">14</span>, <span class="number">24</span>)
-            ),
-            <span class="ident">Operation::Add</span>,
-            <span class="ident">Expression::new_const</span>(<span class="number">4.</span>, <span class="number">27</span>, <span class="number">28</span>)
-        ));
+                <span class="ident">Operation::Add</span>,
+                <span class="ident">Expression::new_const</span>(<span class="number">4.</span>, <span class="number">27</span>, <span class="number">28</span>)
+            )
+        );
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">unary_minus</span>() {
         <span class="kw">let</span> <span class="ident">tree</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;-2x&quot;</span>).<span class="ident">unwrap</span>();
-        <span class="macro">assert_eq!</span>(<span class="ident">tree</span>, <span class="ident">Expression::new_op</span>(
-            <span class="ident">Expression::new_const</span>(<span class="number">0.</span>, <span class="number">0</span>, <span class="number">0</span>),
-            <span class="ident">Operation::Subtract</span>,
-            <span class="ident">Expression::new_op</span>(
-                <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">1</span>, <span class="number">2</span>),
-                <span class="ident">Operation::Multiply</span>,
-                <span class="ident">Expression::new_id</span>(<span class="string">&#39;x&#39;</span>, <span class="number">2</span>, <span class="number">3</span>)
-            )
-        ));
-    }
-
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">order_of_ops_unary_minus</span>() {
-        <span class="kw">let</span> <span class="ident">tree</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;-2x^2 - 3&quot;</span>).<span class="ident">unwrap</span>();
-        <span class="macro">assert_eq!</span>(<span class="ident">tree</span>, <span class="ident">Expression::new_op</span>(
+        <span class="macro">assert_eq!</span>(
+            <span class="ident">tree</span>,
             <span class="ident">Expression::new_op</span>(
                 <span class="ident">Expression::new_const</span>(<span class="number">0.</span>, <span class="number">0</span>, <span class="number">0</span>),
                 <span class="ident">Operation::Subtract</span>,
                 <span class="ident">Expression::new_op</span>(
                     <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">1</span>, <span class="number">2</span>),
                     <span class="ident">Operation::Multiply</span>,
-                    <span class="ident">Expression::new_op</span>(
-                        <span class="ident">Expression::new_id</span>(<span class="string">&#39;x&#39;</span>, <span class="number">2</span>, <span class="number">3</span>),
-                        <span class="ident">Operation::Exponentiate</span>,
-                        <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">4</span>, <span class="number">5</span>),
-                    )
+                    <span class="ident">Expression::new_id</span>(<span class="string">&#39;x&#39;</span>, <span class="number">2</span>, <span class="number">3</span>)
                 )
-            ),
-            <span class="ident">Operation::Subtract</span>,
-            <span class="ident">Expression::new_const</span>(<span class="number">3.</span>, <span class="number">8</span>, <span class="number">9</span>)
-        ));
+            )
+        );
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">order_of_ops_unary_minus</span>() {
+        <span class="kw">let</span> <span class="ident">tree</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;-2x^2 - 3&quot;</span>).<span class="ident">unwrap</span>();
+        <span class="macro">assert_eq!</span>(
+            <span class="ident">tree</span>,
+            <span class="ident">Expression::new_op</span>(
+                <span class="ident">Expression::new_op</span>(
+                    <span class="ident">Expression::new_const</span>(<span class="number">0.</span>, <span class="number">0</span>, <span class="number">0</span>),
+                    <span class="ident">Operation::Subtract</span>,
+                    <span class="ident">Expression::new_op</span>(
+                        <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">1</span>, <span class="number">2</span>),
+                        <span class="ident">Operation::Multiply</span>,
+                        <span class="ident">Expression::new_op</span>(
+                            <span class="ident">Expression::new_id</span>(<span class="string">&#39;x&#39;</span>, <span class="number">2</span>, <span class="number">3</span>),
+                            <span class="ident">Operation::Exponentiate</span>,
+                            <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">4</span>, <span class="number">5</span>),
+                        )
+                    )
+                ),
+                <span class="ident">Operation::Subtract</span>,
+                <span class="ident">Expression::new_const</span>(<span class="number">3.</span>, <span class="number">8</span>, <span class="number">9</span>)
+            )
+        );
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">unary_minus_error</span>() {
         <span class="kw">let</span> <span class="ident">err</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;3*-2x&quot;</span>).<span class="ident">unwrap_err</span>();
-        <span class="macro">assert_eq!</span>(<span class="ident">err</span>, <span class="ident">Error::new</span>(
-            <span class="ident">ErrorType::BadParse</span>,
-            <span class="string">&quot;expected expression; wrap in parens for unary minus&quot;</span>.<span class="ident">to_string</span>(),
-            <span class="number">2</span>,
-            <span class="number">3</span>
-        ));
+        <span class="macro">assert_eq!</span>(
+            <span class="ident">err</span>,
+            <span class="ident">Error::new</span>(
+                <span class="ident">ErrorType::BadParse</span>,
+                <span class="string">&quot;expected expression; wrap in parens for unary minus&quot;</span>.<span class="ident">to_string</span>(),
+                <span class="number">2</span>,
+                <span class="number">3</span>
+            )
+        );
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">unary_minus_nested</span>() {
         <span class="kw">let</span> <span class="ident">tree</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;3*(-2xy)&quot;</span>).<span class="ident">unwrap</span>();
-        <span class="macro">assert_eq!</span>(<span class="ident">tree</span>, <span class="ident">Expression::new_op</span>(
-            <span class="ident">Expression::new_const</span>(<span class="number">3.</span>, <span class="number">0</span>, <span class="number">1</span>),
-            <span class="ident">Operation::Multiply</span>,
+        <span class="macro">assert_eq!</span>(
+            <span class="ident">tree</span>,
             <span class="ident">Expression::new_op</span>(
-                <span class="ident">Expression::new_const</span>(<span class="number">0.</span>, <span class="number">3</span>, <span class="number">3</span>),
-                <span class="ident">Operation::Subtract</span>,
+                <span class="ident">Expression::new_const</span>(<span class="number">3.</span>, <span class="number">0</span>, <span class="number">1</span>),
+                <span class="ident">Operation::Multiply</span>,
                 <span class="ident">Expression::new_op</span>(
+                    <span class="ident">Expression::new_const</span>(<span class="number">0.</span>, <span class="number">3</span>, <span class="number">3</span>),
+                    <span class="ident">Operation::Subtract</span>,
                     <span class="ident">Expression::new_op</span>(
-                        <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">4</span>, <span class="number">5</span>),
+                        <span class="ident">Expression::new_op</span>(
+                            <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">4</span>, <span class="number">5</span>),
+                            <span class="ident">Operation::Multiply</span>,
+                            <span class="ident">Expression::new_id</span>(<span class="string">&#39;x&#39;</span>, <span class="number">5</span>, <span class="number">6</span>)
+                        ),
                         <span class="ident">Operation::Multiply</span>,
-                        <span class="ident">Expression::new_id</span>(<span class="string">&#39;x&#39;</span>, <span class="number">5</span>, <span class="number">6</span>)
-                    ),
-                    <span class="ident">Operation::Multiply</span>,
-                    <span class="ident">Expression::new_id</span>(<span class="string">&#39;y&#39;</span>, <span class="number">6</span>, <span class="number">7</span>)
+                        <span class="ident">Expression::new_id</span>(<span class="string">&#39;y&#39;</span>, <span class="number">6</span>, <span class="number">7</span>)
+                    )
                 )
-            ).<span class="ident">with_bounds</span>(<span class="number">2</span>, <span class="number">8</span>)
-        ));
+                .<span class="ident">with_bounds</span>(<span class="number">2</span>, <span class="number">8</span>)
+            )
+        );
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">complex_polynomial_1</span>() {
         <span class="kw">let</span> <span class="ident">tree</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;1 + 3x^2y^3 + 6&quot;</span>).<span class="ident">unwrap</span>();
-        <span class="macro">assert_eq!</span>(<span class="ident">tree</span>, <span class="ident">Expression::new_op</span>(
+        <span class="macro">assert_eq!</span>(
+            <span class="ident">tree</span>,
             <span class="ident">Expression::new_op</span>(
-                <span class="ident">Expression::new_const</span>(<span class="number">1.</span>, <span class="number">0</span>, <span class="number">1</span>),
-                <span class="ident">Operation::Add</span>,
                 <span class="ident">Expression::new_op</span>(
+                    <span class="ident">Expression::new_const</span>(<span class="number">1.</span>, <span class="number">0</span>, <span class="number">1</span>),
+                    <span class="ident">Operation::Add</span>,
                     <span class="ident">Expression::new_op</span>(
-                        <span class="ident">Expression::new_const</span>(<span class="number">3.</span>, <span class="number">4</span>, <span class="number">5</span>),
+                        <span class="ident">Expression::new_op</span>(
+                            <span class="ident">Expression::new_const</span>(<span class="number">3.</span>, <span class="number">4</span>, <span class="number">5</span>),
+                            <span class="ident">Operation::Multiply</span>,
+                            <span class="ident">Expression::new_op</span>(
+                                <span class="ident">Expression::new_id</span>(<span class="string">&#39;x&#39;</span>, <span class="number">5</span>, <span class="number">6</span>),
+                                <span class="ident">Operation::Exponentiate</span>,
+                                <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">7</span>, <span class="number">8</span>)
+                            ),
+                        ),
                         <span class="ident">Operation::Multiply</span>,
                         <span class="ident">Expression::new_op</span>(
-                            <span class="ident">Expression::new_id</span>(<span class="string">&#39;x&#39;</span>, <span class="number">5</span>, <span class="number">6</span>),
+                            <span class="ident">Expression::new_id</span>(<span class="string">&#39;y&#39;</span>, <span class="number">8</span>, <span class="number">9</span>),
                             <span class="ident">Operation::Exponentiate</span>,
-                            <span class="ident">Expression::new_const</span>(<span class="number">2.</span>, <span class="number">7</span>, <span class="number">8</span>)
+                            <span class="ident">Expression::new_const</span>(<span class="number">3.</span>, <span class="number">10</span>, <span class="number">11</span>)
                         ),
                     ),
-                    <span class="ident">Operation::Multiply</span>,
-                    <span class="ident">Expression::new_op</span>(
-                        <span class="ident">Expression::new_id</span>(<span class="string">&#39;y&#39;</span>, <span class="number">8</span>, <span class="number">9</span>),
-                        <span class="ident">Operation::Exponentiate</span>,
-                        <span class="ident">Expression::new_const</span>(<span class="number">3.</span>, <span class="number">10</span>, <span class="number">11</span>)
-                    ),
                 ),
-            ),
-            <span class="ident">Operation::Add</span>,
-            <span class="ident">Expression::new_const</span>(<span class="number">6.</span>, <span class="number">14</span>, <span class="number">15</span>)
-        ));
+                <span class="ident">Operation::Add</span>,
+                <span class="ident">Expression::new_const</span>(<span class="number">6.</span>, <span class="number">14</span>, <span class="number">15</span>)
+            )
+        );
     }
-}</pre></div>
+}
+</pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="serious" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div>
     <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script></body></html>

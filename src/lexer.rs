@@ -1,5 +1,5 @@
-use std::iter::FromIterator;
 use super::error::{Error, ErrorType};
+use std::iter::FromIterator;
 
 /// The operations in the Serious language.
 /// - Any NaN result or attempted division by 0 will yield an [`UndefinedOperation`](crate::error::ErrorType::UndefinedOperation) error.
@@ -15,7 +15,7 @@ pub enum Operation {
     /// Defined by the arithmetic operator [`+`](core::ops::Add) over [`f64`].
     Add,
     /// Defined by the arithmetic operator [`-`](core::ops::Sub) over [`f64`].
-    Subtract
+    Subtract,
 }
 
 #[derive(Debug, PartialEq)]
@@ -31,12 +31,16 @@ pub enum TokenType {
 pub struct Token {
     pub token_type: TokenType,
     pub start: usize,
-    pub end: usize
+    pub end: usize,
 }
 
 impl Token {
     fn new(token_type: TokenType, start: usize, end: usize) -> Token {
-        Token { token_type, start, end }
+        Token {
+            token_type,
+            start,
+            end,
+        }
     }
 }
 
@@ -44,7 +48,7 @@ impl Token {
 struct LexerState {
     index: usize,
     curr_number: Vec<char>,
-    tokens: Vec<Token>
+    tokens: Vec<Token>,
 }
 
 type IntermediateLexerState = Result<LexerState, Error>;
@@ -54,7 +58,7 @@ impl LexerState {
         LexerState {
             index: 0,
             curr_number: vec![],
-            tokens: Vec::new()
+            tokens: Vec::new(),
         }
     }
 
@@ -63,23 +67,29 @@ impl LexerState {
             let n_len = self.curr_number.len();
             let parsed_number = String::from_iter(self.curr_number).parse::<f64>();
             match parsed_number {
-                Ok(n)  => {
+                Ok(n) => {
                     if n.is_infinite() {
                         return Err(Error::new(
                             ErrorType::Overflow,
                             "number overflowed f64".to_string(),
                             self.index - n_len,
-                            self.index
-                        ))
+                            self.index,
+                        ));
                     }
-                    self.tokens.push(Token::new(TokenType::Constant(n), self.index - n_len, self.index));
+                    self.tokens.push(Token::new(
+                        TokenType::Constant(n),
+                        self.index - n_len,
+                        self.index,
+                    ));
                 }
-                Err(msg) => return Err(Error::new(
-                    ErrorType::BadParse,
-                    msg.to_string(),
-                    self.index - n_len,
-                    self.index
-                ))
+                Err(msg) => {
+                    return Err(Error::new(
+                        ErrorType::BadParse,
+                        msg.to_string(),
+                        self.index - n_len,
+                        self.index,
+                    ))
+                }
             }
             self.curr_number = vec![];
         }
@@ -98,25 +108,47 @@ fn consume_char(state: IntermediateLexerState, (i, next): (usize, char)) -> Inte
     match next {
         '0'..='9' | '.' => {
             state.curr_number.push(next);
-        },
+        }
         _ => {
             state = state.parse_current_number()?;
             match next {
-                ' '       => (),
-                '(' => state.tokens.push(Token::new(TokenType::OpenParen, i, i + 1)),
-                ')' => state.tokens.push(Token::new(TokenType::CloseParen, i, i + 1)),
-                '+' => state.tokens.push(Token::new(TokenType::Op(Operation::Add), i, i + 1)),
-                '-' => state.tokens.push(Token::new(TokenType::Op(Operation::Subtract), i, i + 1)),
-                '*' => state.tokens.push(Token::new(TokenType::Op(Operation::Multiply), i, i + 1)),
-                '/' => state.tokens.push(Token::new(TokenType::Op(Operation::Divide), i, i + 1)),
-                '^' => state.tokens.push(Token::new(TokenType::Op(Operation::Exponentiate), i, i + 1)),
-                'A'..='Z' | 'a'..='z' => state.tokens.push(Token::new(TokenType::Identifier(next), i, i + 1)),
-                _ => return Err(Error::new(
-                    ErrorType::BadParse,
-                    format!("invalid character '{}'", next),
-                    i,
-                    i + 1
-                ))
+                ' ' => (),
+                '(' => state
+                    .tokens
+                    .push(Token::new(TokenType::OpenParen, i, i + 1)),
+                ')' => state
+                    .tokens
+                    .push(Token::new(TokenType::CloseParen, i, i + 1)),
+                '+' => state
+                    .tokens
+                    .push(Token::new(TokenType::Op(Operation::Add), i, i + 1)),
+                '-' => state
+                    .tokens
+                    .push(Token::new(TokenType::Op(Operation::Subtract), i, i + 1)),
+                '*' => state
+                    .tokens
+                    .push(Token::new(TokenType::Op(Operation::Multiply), i, i + 1)),
+                '/' => state
+                    .tokens
+                    .push(Token::new(TokenType::Op(Operation::Divide), i, i + 1)),
+                '^' => {
+                    state
+                        .tokens
+                        .push(Token::new(TokenType::Op(Operation::Exponentiate), i, i + 1))
+                }
+                'A'..='Z' | 'a'..='z' => {
+                    state
+                        .tokens
+                        .push(Token::new(TokenType::Identifier(next), i, i + 1))
+                }
+                _ => {
+                    return Err(Error::new(
+                        ErrorType::BadParse,
+                        format!("invalid character '{}'", next),
+                        i,
+                        i + 1,
+                    ))
+                }
             }
         }
     }
@@ -130,8 +162,8 @@ pub fn lex(text: &str) -> Result<Vec<Token>, Error> {
             ErrorType::BadParse,
             "expected token".to_string(),
             0,
-            1
-        ))
+            1,
+        ));
     }
     let chars = text.chars().enumerate();
     let state = chars.fold(Ok(LexerState::new()), consume_char);
@@ -145,12 +177,10 @@ mod tests {
     #[test]
     fn empty() {
         let err = lex("").unwrap_err();
-        assert_eq!(err, Error::new(
-            ErrorType::BadParse,
-            "expected token".to_string(),
-            0,
-            1
-        ));
+        assert_eq!(
+            err,
+            Error::new(ErrorType::BadParse, "expected token".to_string(), 0, 1)
+        );
     }
 
     #[test]
@@ -159,108 +189,132 @@ mod tests {
         too_big.push_str("0");
 
         let err = lex(too_big.as_str()).unwrap_err();
-        assert_eq!(err, Error::new(
-            ErrorType::Overflow,
-            "number overflowed f64".to_string(),
-            0,
-            310
-        ));
+        assert_eq!(
+            err,
+            Error::new(
+                ErrorType::Overflow,
+                "number overflowed f64".to_string(),
+                0,
+                310
+            )
+        );
     }
 
     #[test]
     fn invalid_float_extra_decimal() {
         let err = lex("0.2.3").unwrap_err();
-        assert_eq!(err, Error::new(
-            ErrorType::BadParse,
-            "invalid float literal".to_string(),
-            0,
-            5
-        ));
+        assert_eq!(
+            err,
+            Error::new(
+                ErrorType::BadParse,
+                "invalid float literal".to_string(),
+                0,
+                5
+            )
+        );
     }
 
     #[test]
     fn invalid_float_only_decimal() {
         let err = lex("abc.").unwrap_err();
-        assert_eq!(err, Error::new(
-            ErrorType::BadParse,
-            "invalid float literal".to_string(),
-            3,
-            4
-        ));
+        assert_eq!(
+            err,
+            Error::new(
+                ErrorType::BadParse,
+                "invalid float literal".to_string(),
+                3,
+                4
+            )
+        );
     }
 
     #[test]
     fn simple_mult() {
         let tokens = lex("4*0.23").unwrap();
-        assert_eq!(tokens, vec![
-            Token::new(TokenType::Constant(4.), 0, 1),
-            Token::new(TokenType::Op(Operation::Multiply), 1, 2),
-            Token::new(TokenType::Constant(0.23), 2, 6)
-        ]);
+        assert_eq!(
+            tokens,
+            vec![
+                Token::new(TokenType::Constant(4.), 0, 1),
+                Token::new(TokenType::Op(Operation::Multiply), 1, 2),
+                Token::new(TokenType::Constant(0.23), 2, 6)
+            ]
+        );
     }
 
     #[test]
     fn simple_add() {
         let tokens = lex("0+45").unwrap();
-        assert_eq!(tokens, vec![
-            Token::new(TokenType::Constant(0.), 0, 1),
-            Token::new(TokenType::Op(Operation::Add), 1, 2),
-            Token::new(TokenType::Constant(45.), 2, 4)
-        ]);
+        assert_eq!(
+            tokens,
+            vec![
+                Token::new(TokenType::Constant(0.), 0, 1),
+                Token::new(TokenType::Op(Operation::Add), 1, 2),
+                Token::new(TokenType::Constant(45.), 2, 4)
+            ]
+        );
     }
 
     #[test]
     fn with_spaces() {
         let tokens = lex("5+ 4 * 3     * 9").unwrap();
-        assert_eq!(tokens, vec![
-            Token::new(TokenType::Constant(5.), 0, 1),
-            Token::new(TokenType::Op(Operation::Add), 1, 2),
-            Token::new(TokenType::Constant(4.), 3, 4),
-            Token::new(TokenType::Op(Operation::Multiply), 5, 6),
-            Token::new(TokenType::Constant(3.), 7, 8),
-            Token::new(TokenType::Op(Operation::Multiply), 13, 14),
-            Token::new(TokenType::Constant(9.), 15, 16)
-        ]);
+        assert_eq!(
+            tokens,
+            vec![
+                Token::new(TokenType::Constant(5.), 0, 1),
+                Token::new(TokenType::Op(Operation::Add), 1, 2),
+                Token::new(TokenType::Constant(4.), 3, 4),
+                Token::new(TokenType::Op(Operation::Multiply), 5, 6),
+                Token::new(TokenType::Constant(3.), 7, 8),
+                Token::new(TokenType::Op(Operation::Multiply), 13, 14),
+                Token::new(TokenType::Constant(9.), 15, 16)
+            ]
+        );
     }
 
     #[test]
     fn parens() {
         let tokens = lex("0+(7*5)+(6*(7+8+90))").unwrap();
-        assert_eq!(tokens, vec![
-            Token::new(TokenType::Constant(0.), 0, 1),
-            Token::new(TokenType::Op(Operation::Add), 1, 2),
-            Token::new(TokenType::OpenParen, 2, 3),
-            Token::new(TokenType::Constant(7.), 3, 4),
-            Token::new(TokenType::Op(Operation::Multiply), 4, 5),
-            Token::new(TokenType::Constant(5.), 5, 6),
-            Token::new(TokenType::CloseParen, 6, 7),
-            Token::new(TokenType::Op(Operation::Add), 7, 8),
-            Token::new(TokenType::OpenParen, 8, 9),
-            Token::new(TokenType::Constant(6.), 9, 10),
-            Token::new(TokenType::Op(Operation::Multiply), 10, 11),
-            Token::new(TokenType::OpenParen, 11, 12),
-            Token::new(TokenType::Constant(7.), 12, 13),
-            Token::new(TokenType::Op(Operation::Add), 13, 14),
-            Token::new(TokenType::Constant(8.), 14, 15),
-            Token::new(TokenType::Op(Operation::Add), 15, 16),
-            Token::new(TokenType::Constant(90.), 16, 18),
-            Token::new(TokenType::CloseParen, 18, 19),
-            Token::new(TokenType::CloseParen, 19, 20)
-        ]);
+        assert_eq!(
+            tokens,
+            vec![
+                Token::new(TokenType::Constant(0.), 0, 1),
+                Token::new(TokenType::Op(Operation::Add), 1, 2),
+                Token::new(TokenType::OpenParen, 2, 3),
+                Token::new(TokenType::Constant(7.), 3, 4),
+                Token::new(TokenType::Op(Operation::Multiply), 4, 5),
+                Token::new(TokenType::Constant(5.), 5, 6),
+                Token::new(TokenType::CloseParen, 6, 7),
+                Token::new(TokenType::Op(Operation::Add), 7, 8),
+                Token::new(TokenType::OpenParen, 8, 9),
+                Token::new(TokenType::Constant(6.), 9, 10),
+                Token::new(TokenType::Op(Operation::Multiply), 10, 11),
+                Token::new(TokenType::OpenParen, 11, 12),
+                Token::new(TokenType::Constant(7.), 12, 13),
+                Token::new(TokenType::Op(Operation::Add), 13, 14),
+                Token::new(TokenType::Constant(8.), 14, 15),
+                Token::new(TokenType::Op(Operation::Add), 15, 16),
+                Token::new(TokenType::Constant(90.), 16, 18),
+                Token::new(TokenType::CloseParen, 18, 19),
+                Token::new(TokenType::CloseParen, 19, 20)
+            ]
+        );
     }
 
     #[test]
     fn identifier() {
         let tokens = lex("8y(4X + 7.3)").unwrap();
-        assert_eq!(tokens, vec![
-            Token::new(TokenType::Constant(8.), 0, 1),
-            Token::new(TokenType::Identifier('y'), 1, 2),
-            Token::new(TokenType::OpenParen, 2, 3),
-            Token::new(TokenType::Constant(4.), 3, 4),
-            Token::new(TokenType::Identifier('X'), 4, 5),
-            Token::new(TokenType::Op(Operation::Add), 6, 7),
-            Token::new(TokenType::Constant(7.3), 8, 11),
-            Token::new(TokenType::CloseParen, 11, 12)
-        ]);
+        assert_eq!(
+            tokens,
+            vec![
+                Token::new(TokenType::Constant(8.), 0, 1),
+                Token::new(TokenType::Identifier('y'), 1, 2),
+                Token::new(TokenType::OpenParen, 2, 3),
+                Token::new(TokenType::Constant(4.), 3, 4),
+                Token::new(TokenType::Identifier('X'), 4, 5),
+                Token::new(TokenType::Op(Operation::Add), 6, 7),
+                Token::new(TokenType::Constant(7.3), 8, 11),
+                Token::new(TokenType::CloseParen, 11, 12)
+            ]
+        );
     }
 }

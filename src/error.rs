@@ -8,7 +8,7 @@ pub enum ErrorType {
     /// Returned by [`interpret`](crate::interpreter::interpret)/[`interpret_tree`](crate::interpreter::interpret_tree) if an [`Operation`](crate::parser::Operation) returns NaN or a division by 0 is attempted.
     UndefinedOperation,
     /// Returned by [`parse`](crate::parser::parse)/[`interpret`](crate::interpreter::interpret) if a literal constant is too large to fit in an [`f64`] or by [`interpret`](crate::interpreter::interpret)/[`interpret_tree`](crate::interpreter::interpret_tree) if an operation returns an infinity.
-    Overflow
+    Overflow,
 }
 
 /// Defines the type for [`Result::Err`]s of [`parse`](crate::parser::parse), [`interpret`](crate::interpreter::interpret), and [`interpret_tree`](crate::interpreter::interpret_tree).
@@ -32,11 +32,16 @@ pub struct Error {
     pub error_type: ErrorType,
     pub message: String,
     pub start: usize,
-    pub end: usize
+    pub end: usize,
 }
 
 impl Error {
     pub fn new(error_type: ErrorType, message: String, start: usize, end: usize) -> Error {
-        Error { error_type, message, start, end }
+        Error {
+            error_type,
+            message,
+            start,
+            end,
+        }
     }
 }
